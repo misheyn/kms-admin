@@ -1,12 +1,11 @@
 <template>
   <div
-      class="card"
+      class="item"
       :class="{ 'active': active }"
       @click="toggleActive">
-    <div class="watchman-photo"></div>
+    <div class="item-photo"></div>
     <div class="info">
-      <div> {{ watchman.lastName }}</div>
-      <div> Логин: {{ watchman.login }}</div>
+      <slot></slot>
     </div>
   </div>
 </template>
@@ -14,7 +13,7 @@
 <script>
 export default {
   props: {
-    watchman: {
+    object: {
       type: Object,
       required: true
     },
@@ -26,14 +25,14 @@ export default {
   methods: {
     toggleActive() {
       this.$emit('toggle-active')
-      this.$emit('show-info-card', this.watchman)
+      this.$emit('show-info-card', this.object)
     }
   }
 }
 </script>
 
 <style scoped>
-.card {
+.item {
   margin-top: 10px;
   padding: 5px 15px;
   display: flex;
@@ -44,7 +43,7 @@ export default {
   cursor: pointer;
 }
 
-.card.active {
+.item.active {
   border: 2px solid aquamarine;
 }
 
@@ -53,8 +52,8 @@ export default {
   margin-left: 15px;
 }
 
-.watchman-photo {
-  background-image: url("../../assets/default_photo.png");
+.item-photo {
+  background-image: url("../assets/default_photo.png");
   width: 50px;
   height: 50px;
   background-size: cover;

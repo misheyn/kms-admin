@@ -24,7 +24,7 @@
             placeholder="Подтвердите новый пароль"/>
         <div v-if="!samePassword" class="error-msg">Пароли не совпадают</div>
       </div>
-      <div class="add__photo">
+      <div class="add__photo" style="margin-left: 10px;">
         <div class="choice__photo">
           <input ref="fileInput" type="file" @click="cancelImage" @change="handleFileChange" accept="image/*"/>
           <div v-if="localWatchman.photo !== watchman.photo" @click="cancelImage" class="cancel-cross"></div>
@@ -164,7 +164,7 @@ form {
 }
 
 .photo-preview img {
-  max-width: 30%;
+  max-width: 25%;
 }
 
 .cancel-cross {
@@ -176,6 +176,6 @@ form {
 }
 
 .form__inputs, .add__photo {
-  max-width: 320px;
+  max-width: 350px;
 }
 </style>

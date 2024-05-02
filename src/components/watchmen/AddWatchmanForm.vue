@@ -139,7 +139,7 @@ form {
 }
 
 .photo-preview img {
-  max-width: 30%;
+  max-width: 25%;
 }
 
 .cancel-cross {
@@ -151,6 +151,6 @@ form {
 }
 
 .form__inputs, .add__photo {
-  max-width: 320px;
+  max-width: 350px;
 }
 </style>

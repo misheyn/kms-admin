@@ -34,13 +34,13 @@ import {mapMutations, mapState} from "vuex"
 import ConfirmDeleteForm from "@/components/ConfirmDeleteForm.vue";
 
 export default {
+  components: {ConfirmDeleteForm, EditWatchmanForm, CreateDialog, MyButton},
   data() {
     return {
       editDialogVisible: false,
       removeDialogVisible: false
     }
   },
-  components: {ConfirmDeleteForm, EditWatchmanForm, CreateDialog, MyButton},
   props: {
     watchman: {
       type: Object,

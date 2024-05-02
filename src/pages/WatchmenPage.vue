@@ -3,7 +3,7 @@
     <div class="top__panel">
       <my-button
           class="create-btn"
-          @click="showDialog">
+          @click="this.dialogVisible = true">
         Добавить вахтера
       </my-button>
       <create-dialog v-model:show="dialogVisible">
@@ -14,15 +14,17 @@
           placeholder="Поиск..."/>
     </div>
     <div class="center__panel">
-      <watchman-list
+      <list-of-cards
           v-if="!isLoading"
-          :watchmen="searchedWatchmen"
+          :objects="searchedWatchmen"
+          :element="'вахтеров'"
+          :card-type="'watchman'"
           @show-info-card="showInfoCard"/>
       <h2 v-else style="margin: 15px 5px">Загрузка...</h2>
       <watchman-info-card
           v-if="selectedWatchman"
           :watchman="selectedWatchman"
-          @close-info-card="closeInfoCard"
+          @close-info-card="this.selectedWatchman = null"
           @remove="removeWatchman"
           @update-watchman-info="updateWatchmanInfo"/>
     </div>
@@ -30,16 +32,16 @@
 </template>
 
 <script>
-import MyButton from "@/components/UI/MyButton.vue";
-import SearchBar from "@/components/UI/SearchBar.vue";
-import WatchmanList from "@/components/watchmen/WatchmanList.vue";
-import CreateDialog from "@/components/UI/CreateDialog.vue";
-import AddWatchmanForm from "@/components/watchmen/AddWatchmanForm.vue";
-import WatchmanInfoCard from "@/components/watchmen/WatchmanInfoCard.vue";
-import watchmenApi from "@/api/watchmenApi";
+import MyButton from "@/components/UI/MyButton.vue"
+import SearchBar from "@/components/UI/SearchBar.vue"
+import CreateDialog from "@/components/UI/CreateDialog.vue"
+import AddWatchmanForm from "@/components/watchmen/AddWatchmanForm.vue"
+import WatchmanInfoCard from "@/components/watchmen/WatchmanInfoCard.vue"
+import watchmenApi from "@/api/watchmenApi"
+import ListOfCards from "@/components/ListOfCards.vue"
 
 export default {
-  components: {WatchmanInfoCard, AddWatchmanForm, CreateDialog, WatchmanList, SearchBar, MyButton},
+  components: {ListOfCards, WatchmanInfoCard, AddWatchmanForm, CreateDialog, SearchBar, MyButton},
   data() {
     return {
       searchQuery: '',
@@ -50,9 +52,6 @@ export default {
     }
   },
   methods: {
-    showDialog () {
-      this.dialogVisible = true
-    },
     addWatchman (user) {
       const watchman = {
         id: user.user_id,
@@ -66,9 +65,6 @@ export default {
     },
     showInfoCard (watchman) {
       this.selectedWatchman = watchman
-    },
-    closeInfoCard () {
-      this.selectedWatchman = null
     },
     removeWatchman (watchman) {
       this.watchmen = this.watchmen.filter(wm => wm.id !== watchman.id)

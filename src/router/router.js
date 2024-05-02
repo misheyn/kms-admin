@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MainPage from "@/pages/MainPage.vue";
-import LoginPage from "@/pages/LoginPage.vue";
-import ShiftsPage from "@/pages/ShiftsPage.vue";
-import WatchmenPage from "@/pages/WatchmenPage.vue";
-import PermissionsPage from "@/pages/PermissionsPage.vue";
-import DivisionsPage from "@/pages/DivisionsPage.vue";
-import EmployeesPage from "@/pages/EmployeesPage.vue";
-import AudiencesPage from "@/pages/AudiencesPage.vue";
+import MainPage from "@/pages/MainPage.vue"
+import LoginPage from "@/pages/LoginPage.vue"
+import ShiftsPage from "@/pages/ShiftsPage.vue"
+import WatchmenPage from "@/pages/WatchmenPage.vue"
+import PermissionsPage from "@/pages/PermissionsPage.vue"
+import DivisionsPage from "@/pages/DivisionsPage.vue"
+import EmployeesPage from "@/pages/EmployeesPage.vue"
+import AudiencesPage from "@/pages/AudiencesPage.vue"
 
 const routes = [
   {
