@@ -71,34 +71,37 @@ export default {
     removeAudience (audience) {
       this.audiences = this.audiences.filter(aud => aud.id !== audience.id)
     },
-      async fetchAudiences () {
-        this.isLoading = true
-        const getAudiencesResponse = await audiencesApi.getAllKeys()
-        console.log(getAudiencesResponse)
+    async fetchAudiences() {
+      this.isLoading = true
+      const getAudiencesResponse = await audiencesApi.getAllKeys()
+      console.log(getAudiencesResponse)
 
+      if (getAudiencesResponse && Array.isArray(getAudiencesResponse)) {
         getAudiencesResponse.forEach(it => {
-          const index = this.audiences.findIndex(audience => audience.id === it.audience.audience_id)
-          if (index !== -1) {
-            const key = { id: it.key_id, state: it.keyState, main: it.main }
-            this.audiences[index].keys.push(key)
-          } else {
-            const audience = {
-              id: it.audience.audience_id || undefined,
-              number: it.audience.number || undefined,
-              floor: it.audience.floor || undefined,
-              capacity: it.audience.capacity || undefined,
-              signalisation: it.audience.signalisation || undefined,
-              type: it.audience.audienceType || undefined,
-              keys: [
-                { id: it.key_id, state: it.keyState, main: it.main }
-              ]
+          if (it.audience) {
+            const index = this.audiences.findIndex(audience => audience.id === (it.audience.audience_id || it.audience))
+            if (index !== -1) {
+              const key = { id: it.key_id, state: it.keyState, main: it.main }
+              this.audiences[index].keys.push(key)
+            } else {
+              const audience = {
+                id: it.audience.audience_id,
+                number: it.audience.number,
+                floor: it.audience.floor,
+                capacity: it.audience.capacity,
+                signalisation: it.audience.signalisation,
+                type: it.audience.audienceType,
+                keys: [
+                  { id: it.key_id, state: it.keyState, main: it.main }
+                ]
+              }
+              this.audiences.push(audience)
             }
-            this.audiences.push(audience)
           }
         })
-        console.log(this.audiences)
-        this.isLoading = false
-      },
+      }
+      this.isLoading = false
+    },
     updateAudienceInfo(updatedAudience) {
       const index = this.audiences.findIndex(e => e.id === updatedAudience.id)
       if (index !== -1) {
@@ -109,18 +112,17 @@ export default {
   },
   computed: {
     searchedAudience () {
-      const query = this.searchQuery.toLowerCase();
+      const query = this.searchQuery.toLowerCase()
       return [...this.audiences].filter(audience => {
         return Object.values(audience).some(value => {
           if (typeof value === 'string') {
-            return value.toLowerCase().includes(query);
+            return value.toLowerCase().includes(query)
+          } else if (value !== undefined && value !== null) {
+            return value.toString().toLowerCase().includes(query)
           }
-          // } else if (value !== undefined && value !== null) { // Добавленная проверка
-          //   return value.toString().toLowerCase().includes(query); // Используем toString для преобразования в строку
-          // }
-          return false;
-        });
-      });
+          return false
+        })
+      })
     }
   },
   mounted() {
