@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent>
-    <div class="inputs__photo">
-      <div class="form__inputs">
+    <div class="form__inputs">
+      <div class="first__block">
         <form-input
             v-model="watchman.lastName"
             placeholder="Фамилия"/>
@@ -19,8 +19,8 @@
             placeholder="Пароль"
             :password="true"/>
       </div>
-      <div class="add__photo">
-        <div class="choice__photo">
+      <div class="second__block" style="margin-left: 15px;">
+        <div class="choice__photo" style="margin-top: 5px;">
           <input ref="fileInput" type="file" @click="cancelImage" @change="handleFileChange" accept="image/*"/>
           <div v-if="watchman.photo !== defaultImage" @click="cancelImage" class="cancel-cross"></div>
         </div>
@@ -109,19 +109,15 @@ export default {
 </script>
 
 <style scoped>
-form {
+form, .first__block, .second__block {
   display: flex;
   flex-direction: column;
 }
 
-.inputs__photo, .choice__photo {
+.form__inputs, .choice__photo {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-}
-
-.choice__photo {
-  margin-top: 5px;
+  justify-content: space-between;
 }
 
 .btn {
@@ -133,9 +129,9 @@ form {
 }
 
 .photo-preview {
-  margin-top: 10px;
+  margin: 10px 0 0 5px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .photo-preview img {
@@ -150,7 +146,7 @@ form {
   background-size: cover;
 }
 
-.form__inputs, .add__photo {
-  max-width: 350px;
+.first__block, .second__block {
+  max-width: 330px;
 }
 </style>

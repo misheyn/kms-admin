@@ -49,8 +49,7 @@
         </div>
       </div>
     </div>
-
-    <div class="btns__wrapper">
+    <div class="btn__wrapper">
       <my-button
           class="cancel-btn"
           @click.prevent="cancelForm">
@@ -130,7 +129,7 @@ form, .first__block, .second__block {
   justify-content: space-between;
 }
 
-.btns__wrapper {
+.btn__wrapper {
   flex-direction: row;
   align-self: flex-end;
   margin-top: 20px;

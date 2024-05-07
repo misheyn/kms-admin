@@ -47,7 +47,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   flex-direction: column;
-  margin: 30px;
+  margin: 65px;
   padding: 20px;
 }
 

@@ -6,7 +6,7 @@
       <div>Логин: {{ watchman.login }}</div>
       <div class="photo"></div>
     </div>
-    <div class="btns__wrapper">
+    <div class="btn__wrapper">
       <my-button class="btn-remove" @click="removeDialogVisible = true">Удалить</my-button>
       <my-button class="btn-edit" @click="editDialogVisible = true">Редактировать</my-button>
     </div>
@@ -124,7 +124,7 @@ export default {
   cursor: pointer;
 }
 
-.btns__wrapper {
+.btn__wrapper {
   flex-direction: row;
   align-self: flex-end;
   justify-content: center;
@@ -133,14 +133,12 @@ export default {
 .btn-remove {
   color: red;
   border-color: red;
-  cursor: pointer;
 }
 
 .btn-edit {
   color: blue;
   border-color: blue;
   margin-left: 10px;
-  cursor: pointer;
 }
 
 .info__wrapper {

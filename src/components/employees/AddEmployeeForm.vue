@@ -1,6 +1,5 @@
 <template>
   <form @submit.prevent>
-<!--    form__inputs-->
     <div class="form__inputs">
       <div class="first__block">
         <form-input
@@ -96,7 +95,7 @@ export default {
           this.employee.patronymic,
           this.employee.type)
       this.$emit('create', createResponse)
-      this.watchman = {
+      this.employee = {
         lastName: '',
         firstName: '',
         patronymic: '',

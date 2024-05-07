@@ -1,6 +1,6 @@
 <template>
   <div class="page__wrapper">
-    <div class="btns__wrapper" style="display: flex;">
+    <div class="btn__wrapper" style="display: flex;">
       <button class="active-tab switch-btn" @click="selectTab('employees')">Сотрудники</button>
       <button class="switch-btn" @click="selectTab('audiences')">Аудитории</button>
     </div>
@@ -8,7 +8,8 @@
     <div class="top__panel">
       <my-button
           class="create-btn"
-          @click="this.dialogVisible = true">
+          @click="this.dialogVisible = true"
+          style="margin-top: 20px;">
         Добавить сотрудника
       </my-button>
       <create-dialog v-model:show="dialogVisible">
@@ -102,19 +103,28 @@ export default {
         this.employees.splice(index, 1, updatedEmployee)
       }
       this.showInfoCard(updatedEmployee)
+    },
+    convertType(type) {
+      if (type === "TEACHER") return 'Преподаватель'
+      else if (type === "SERVICE") return 'Персонал'
+      else if (type === "SECURITY") return 'Охрана'
+      else if (type === "WATCHMAN") return 'Вахтер'
     }
   },
   computed: {
     searchedEmployee () {
-      const query = this.searchQuery.toLowerCase();
-      return [...this.employees].filter(employee => {
+      const query = this.searchQuery.toLowerCase()
+      const convertedTypes = this.employees.map(employee => this.convertType(employee.type).toLowerCase())
+
+      return [...this.employees].filter((employee, index) => {
+        const convertedType = convertedTypes[index]
         return Object.values(employee).some(value => {
           if (typeof value === 'string') {
-            return value.toLowerCase().includes(query);
+            return value.toLowerCase().includes(query)
           }
           return false;
-        });
-      });
+        }) || convertedType.includes(query)
+      })
     }
   },
   mounted() {
@@ -135,10 +145,5 @@ export default {
 .top__panel, .center__panel {
   display: flex;
   justify-content: space-between;
-}
-
-.create-btn {
-  cursor: pointer;
-  margin-top: 20px;
 }
 </style>

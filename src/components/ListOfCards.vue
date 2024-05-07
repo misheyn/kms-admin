@@ -11,6 +11,8 @@
         <div v-if="cardType === 'employee' || cardType === 'watchman'"><b>{{ item.lastName }} {{ item.firstName }}</b></div>
         <div v-if="cardType === 'employee'">Должность: {{ convertType(item.type) }}</div>
         <div v-if="cardType === 'watchman'">Логин: {{ item.login }}</div>
+        <div v-if="cardType === 'audience'">{{ item.number }}</div>
+        <div v-if="cardType === 'audience'">Тип: {{ convertType(item.type) }}</div>
       </list-item>
     </transition-group>
   </div>
@@ -48,6 +50,10 @@ export default {
       else if (type === "SERVICE") return 'Персонал'
       else if (type === "SECURITY") return 'Охрана'
       else if (type === "WATCHMAN") return 'Вахтер'
+      else if (type === "STUDY") return 'Учебная'
+      else if (type === "MULTIMEDIA") return 'Мультимедийная'
+      else if (type === "LAB") return 'Лаборатория'
+      else if (type === "ADMINISTRATION") return 'Административная'
     }
   },
   computed: {

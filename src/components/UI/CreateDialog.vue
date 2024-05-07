@@ -31,7 +31,7 @@ export default {
   background: white;
   border-radius: 15px;
   min-height: 50px;
-  min-width: 400px;
+  min-width: 350px;
   padding: 20px;
 }
 </style>

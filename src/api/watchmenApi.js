@@ -25,10 +25,10 @@ export default class watchmenApi {
                 username: username,
                 password: password
             })
-                .then(response => response.data);
+                .then(response => response.data)
         } catch (error) {
-            alert("Error!");
-            console.error(error);
+            alert("Error!")
+            console.error(error)
         }
     }
 

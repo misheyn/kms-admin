@@ -1,7 +1,9 @@
 <template>
   <div class="navbar">
-    <div class="logo" @click="$router.push('/main')">Keys Management System</div>
-    <div class="navbar__btns" v-if="!isAuthPage" style="margin-left: auto;">
+    <div
+        class="logo"
+        @click="selectTab('main')">Keys Management System</div>
+    <div class="navbar__btn" v-if="!isAuthPage" style="margin-left: auto;">
       <button
           class="switch-btn"
           :class="{ 'active-tab': selectedTab === 'shifts' }"
@@ -45,12 +47,13 @@ export default {
       else if (tab === 'watchmen') this.$router.push('/watchmen')
       else if (tab === 'permissions') this.$router.push('/permissions')
       else if (tab === 'divisions') this.$router.push('/divisions')
+      else if (tab === 'main') this.$router.push('/main')
     }
   },
   computed: {
     isAuthPage () {
       return this.$route.name === 'auth'
-    }
+    },
   },
   mounted() {
     this.selectedTab = this.$route.name
@@ -79,7 +82,7 @@ export default {
   color: darkmagenta;
 }
 
-.navbar__btns, .switch-btn {
+.navbar__btn, .switch-btn {
   height: 63px;
 }
 </style>

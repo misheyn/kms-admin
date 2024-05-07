@@ -18,5 +18,6 @@ export default {
   border-radius: 12px;
   color: black;
   font-size: large;
+  cursor: pointer;
 }
 </style>
