@@ -6,6 +6,7 @@
           :object="item"
           :key="index"
           :active="activeIndex === index"
+          :is-employee="cardType === 'employee' || cardType === 'watchman'"
           @show-info-card="$emit('show-info-card', item)"
           @toggle-active="toggleActive(index)">
         <div v-if="cardType === 'employee' || cardType === 'watchman'"><b>{{ item.lastName }} {{ item.firstName }}</b></div>
@@ -13,6 +14,7 @@
         <div v-if="cardType === 'watchman'">Логин: {{ item.login }}</div>
         <div v-if="cardType === 'audience'">{{ item.number }}</div>
         <div v-if="cardType === 'audience'">Тип: {{ convertType(item.type) }}</div>
+        <div v-if="cardType === 'division'">{{ item.name }}</div>
       </list-item>
     </transition-group>
   </div>

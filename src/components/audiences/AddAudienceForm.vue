@@ -5,24 +5,14 @@
             v-model="audience.number"
             placeholder="Номер аудитории"/>
         <form-input
-            v-model="audience.floor"
-            placeholder="Этаж"/>
-        <form-input
             v-model="audience.capacity"
             placeholder="Вместимость"/>
-        <div style="padding: 3px 5px 0">
-          <label style="margin-right: 5px">Сигнализация:</label>
-          <input v-model="audience.signalisation" type="radio" id="sign-yes" name="signalisation" value="ON" checked>
-          <label for="sign-yes"> Есть </label>
-          <input v-model="audience.signalisation" type="radio" id="sign-no" name="signalisation" value="NONE">
-          <label for="sign-no"> Нет </label>
-        </div>
         <select class="audience-type" v-model="audience.type">
           <option value="" selected disabled>Выберите тип</option>
           <option value="STUDY">Учебная</option>
           <option value="MULTIMEDIA">Мультимедийная</option>
           <option value="LAB">Лаборатория</option>
-          <option value="ADMINISTRATION">Административная</option>
+          <option value="ADMINISTRATION">Служебная</option>
         </select>
       <my-button
         class="btn"
@@ -44,7 +34,6 @@ export default {
     return {
       audience: {
         number: '',
-        floor: '',
         capacity: '',
         signalisation: "ON",
         type: "",
@@ -56,27 +45,24 @@ export default {
     async addAudience() {
       const createAudienceResponse = await audiencesApi.createAudience(
           this.audience.number,
-          this.audience.floor,
           this.audience.capacity,
-          this.audience.signalisation,
           this.audience.type)
-      console.log(createAudienceResponse)
       const createMainKeyResponse = await audiencesApi.createKey(createAudienceResponse.audience_id, true)
       const createSpareKeyResponse = await audiencesApi.createKey(createAudienceResponse.audience_id, false)
       this.audience.keys.push({
         id: createMainKeyResponse.key_id,
-        state: createMainKeyResponse.keyState,
-        main: createMainKeyResponse.main })
+        state: createMainKeyResponse.key_state,
+        main: createMainKeyResponse.main,
+        qrData: createMainKeyResponse.qr})
       this.audience.keys.push({
         id: createSpareKeyResponse.key_id,
-        state: createSpareKeyResponse.keyState,
-        main: createSpareKeyResponse.main })
+        state: createSpareKeyResponse.key_state,
+        main: createSpareKeyResponse.main,
+        qrData: createSpareKeyResponse.qr})
       this.$emit('create', this.audience)
       this.audience = {
         number: '',
-        floor: '',
         capacity: '',
-        signalisation: "ON",
         type: "",
         keys: []
       }

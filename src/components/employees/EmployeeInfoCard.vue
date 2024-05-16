@@ -6,17 +6,19 @@
     </div>
     <div class="info__wrapper">
       <div>Должность: {{ convertType(employee.type) }}</div>
-      <div>№ удостоверения: 2984746833</div>
-      <div>Действительно до: 24.03.2026</div>
+      <div>№ удостоверения: {{ employee.IDNumber }}</div>
+      <div>Действительно до: {{ employee.IDEndDate }}</div>
       <div class="images">
-        <div class="photo"></div>
+        <div class="photo">
+          <img :src="handleImagePreview(employee.photo)" alt="employee-img">
+        </div>
         <vue-qrcode
             class="qrcode"
             ref="qrcode"
             :options="{
                 width: 120
             }"
-            :value="qrData"
+            :value="employee.qrData"
             :foreground-color="'#000'"
             :background-color="'#fff'"
             @click="downloadQrcode">
@@ -56,8 +58,7 @@ export default {
   data() {
     return {
       editDialogVisible: false,
-      removeDialogVisible: false,
-      qrData: 'jdjrf745455hubbdc',
+      removeDialogVisible: false
     }
   },
   props: {
@@ -99,22 +100,43 @@ export default {
       }
     },
     async removeEmployee() {
-      const deleteResponse = await employeesApi.deleteEmployee(this.employee.id, this.employee.firstName,
-          this.employee.lastName, this.employee.patronymic, this.employee.type)
+      const deleteResponse = await employeesApi.updateEmployee(
+          this.employee.id,
+          this.employee.firstName,
+          this.employee.lastName,
+          this.employee.patronymic,
+          this.employee.imageId,
+          this.employee.type,
+          "FIRED"
+      )
       if (deleteResponse.status === 200) {
         this.$emit('remove', this.employee)
         this.closeInfoCard()
       }
     },
-    async editEmployee(updatedEmployee) {
-      const updateResponse = await employeesApi.updateEmployee(
+    async editEmployee(updatedEmployee, deleteImageId) {
+      const updateEmployeeResponse = await employeesApi.updateEmployee(
           updatedEmployee.id,
           updatedEmployee.firstName,
           updatedEmployee.lastName,
           updatedEmployee.patronymic,
-          updatedEmployee.type
+          updatedEmployee.imageId,
+          updatedEmployee.type,
+          "WORKS"
       )
-      if (updateResponse.status === 200) {
+      const updateIDResponse = await employeesApi.updateID(
+          updatedEmployee.IDId,
+          updatedEmployee.id,
+          updatedEmployee.IDNumber,
+          updatedEmployee.IDStartDate,
+          updatedEmployee.IDEndDate
+      )
+      let isSuccess = true
+      if (deleteImageId > 0) {
+        const deleteImageResponse = await employeesApi.deleteImage(deleteImageId)
+        if (deleteImageResponse.status !== 200 && deleteImageResponse.status !== 204) isSuccess = false
+      }
+      if (updateEmployeeResponse.status === 200 && updateIDResponse.status === 200 && isSuccess) {
         this.$emit('update-employee-info', updatedEmployee)
         this.editDialogVisible = false
       }
@@ -123,8 +145,10 @@ export default {
       if (type === "TEACHER") return 'Преподаватель'
       else if (type === "SERVICE") return 'Персонал'
       else if (type === "SECURITY") return 'Охрана'
-      else if (type === "WATCHMAN") return 'Вахтер'
-    }
+    },
+    handleImagePreview(file) {
+      return URL.createObjectURL(file)
+    },
   },
   computed: {
     ...mapState({
@@ -147,11 +171,14 @@ export default {
 }
 
 .photo {
-  background-image: url("../../assets/default_photo.png");
-  width: 110px;
   height: 110px;
   background-size: cover;
-  margin-right: 30px;
+  overflow: hidden;
+}
+
+.photo img {
+  height: 100%;
+  width: auto;
 }
 
 .close-cross {

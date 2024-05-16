@@ -4,7 +4,9 @@
     <div class="name"><b>{{ watchman.lastName }} {{ watchman.firstName }} {{ watchman.patronymic }}</b></div>
     <div class="info__wrapper">
       <div>Логин: {{ watchman.login }}</div>
-      <div class="photo"></div>
+      <div class="photo">
+        <img :src="handleImagePreview(watchman.photo)" alt="watchman-img">
+      </div>
     </div>
     <div class="btn__wrapper">
       <my-button class="btn-remove" @click="removeDialogVisible = true">Удалить</my-button>
@@ -31,7 +33,8 @@ import CreateDialog from "@/components/UI/CreateDialog.vue"
 import EditWatchmanForm from "@/components/watchmen/EditWatchmanForm.vue"
 import watchmenApi from "@/api/watchmenApi"
 import {mapMutations, mapState} from "vuex"
-import ConfirmDeleteForm from "@/components/ConfirmDeleteForm.vue";
+import ConfirmDeleteForm from "@/components/ConfirmDeleteForm.vue"
+import employeesApi from "@/api/employeesApi"
 
 export default {
   components: {ConfirmDeleteForm, EditWatchmanForm, CreateDialog, MyButton},
@@ -58,29 +61,43 @@ export default {
     },
     async removeWatchman() {
       const userResponse = await watchmenApi.getUser(this.watchman.id)
-      const deleteResponse = await watchmenApi.deleteWatchman(userResponse.employee.employee_id, this.watchman.firstName,
-          this.watchman.lastName, this.watchman.patronymic)
+      const deleteResponse = await employeesApi.updateEmployee(
+          userResponse.employee.employee_id,
+          this.watchman.firstName,
+          this.watchman.lastName,
+          this.watchman.patronymic,
+          this.watchman.imageId,
+          "WATCHMAN")
       console.log(deleteResponse)
       if (deleteResponse.status === 200) {
         this.$emit('remove', this.watchman)
         this.closeInfoCard()
       }
     },
-    async editWatchman(updatedWatchman, newPassword) {
+    async editWatchman(updatedWatchman, newPassword, deleteImageId) {
       const userResponse = await watchmenApi.getUser(updatedWatchman.id)
-      const updateWatchmanResponse = await watchmenApi.updateWatchman(
+      const updateWatchmanResponse = await employeesApi.updateEmployee(
           userResponse.employee.employee_id,
           updatedWatchman.firstName,
           updatedWatchman.lastName,
-          updatedWatchman.patronymic
-      )
+          updatedWatchman.patronymic,
+          updatedWatchman.photo.image_id,
+          "WATCHMAN")
       const updateUserResponse = await watchmenApi.updateUser(updatedWatchman.id, updatedWatchman.login, newPassword)
-      if (updateWatchmanResponse.status === 200 && updateUserResponse.status === 200) {
+      let isSuccess = true
+      if (deleteImageId > 0) {
+        const deleteImageResponse = await employeesApi.deleteImage(deleteImageId)
+        if (deleteImageResponse.status !== 200 && deleteImageResponse.status !== 204) isSuccess = false
+      }
+      if (updateWatchmanResponse.status === 200 && updateUserResponse.status === 200 && isSuccess) {
         this.$emit('update-watchman-info', updatedWatchman)
         this.editDialogVisible = false
-      } else {
-        console.log('ABOBA')
+      } else if (updateUserResponse.status === 204) {
+        alert("Нельзя изменить пароль на текущий!")
       }
+    },
+    handleImagePreview(file) {
+      return URL.createObjectURL(file)
     }
   },
   computed: {
@@ -108,11 +125,14 @@ export default {
 }
 
 .photo {
-  background-image: url("../../assets/default_photo.png");
-  width: 110px;
   height: 110px;
   background-size: cover;
-  margin-right: 30px;
+  overflow: hidden;
+}
+
+.photo img {
+  height: 100%;
+  width: auto;
 }
 
 .close-cross {

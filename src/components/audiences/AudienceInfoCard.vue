@@ -19,7 +19,7 @@
               :options="{
                 width: 120
             }"
-              :value="qrData1"
+              :value="audience.keys[0].qr"
               :foreground-color="'#000'"
               :background-color="'#fff'"
               @click="downloadQrcode">
@@ -34,7 +34,7 @@
               :options="{
                 width: 120
             }"
-              :value="qrData2"
+              :value="audience.keys[1].qr"
               :foreground-color="'#000'"
               :background-color="'#fff'"
               @click="downloadQrcode">
@@ -52,12 +52,12 @@
           @edit="editAudience"
           @close="editDialogVisible = false"/>
     </create-dialog>
-<!--    <create-dialog v-model:show="removeDialogVisible">-->
-<!--      <confirm-delete-form-->
-<!--          :element="'эту аудиторию'"-->
-<!--          @delete="removeAudience"-->
-<!--          @close="removeDialogVisible = false"/>-->
-<!--    </create-dialog>-->
+    <create-dialog v-model:show="removeDialogVisible">
+      <confirm-delete-form
+          :element="'эту аудиторию'"
+          @delete="removeAudience"
+          @close="removeDialogVisible = false"/>
+    </create-dialog>
   </div>
 </template>
 
@@ -68,15 +68,14 @@ import MyButton from "@/components/UI/MyButton.vue"
 import {mapMutations, mapState} from "vuex"
 import EditAudienceForm from "@/components/audiences/EditAudienceForm.vue"
 import audiencesApi from "@/api/audiencesApi"
+import ConfirmDeleteForm from "@/components/ConfirmDeleteForm.vue"
 
 export default {
-  components: {EditAudienceForm, MyButton, VueQrcode, CreateDialog},
+  components: {ConfirmDeleteForm, EditAudienceForm, MyButton, VueQrcode, CreateDialog},
   data() {
     return {
       editDialogVisible: false,
-      removeDialogVisible: false,
-      qrData1: 'jdjrf745455hubbdc',
-      qrData2: 'huy7e3ueuhuy4yu47',
+      removeDialogVisible: false
     }
   },
   props: {
@@ -117,29 +116,37 @@ export default {
         console.error('QR code component not found')
       }
     },
-/*    async removeEmployee() {
-      const deleteResponse = await employeesApi.deleteEmployee(this.employee.id, this.employee.firstName,
-          this.employee.lastName, this.employee.patronymic, this.employee.type)
+    async removeAudience() {
+      const deleteResponse = await audiencesApi.deleteAudience(this.audience.id, this.audience.number,
+          this.audience.capacity, this.audience.signalisation, this.audience.type)
       if (deleteResponse.status === 200) {
-        this.$emit('remove', this.employee)
+        this.$emit('remove', this.audience)
         this.closeInfoCard()
       }
-    },*/
+    },
     async editAudience(updatedAudience) {
-      console.log(updatedAudience)
       const updateMainKeyResponse = await audiencesApi.updateKey(
+          updatedAudience.keys[0].id,
           updatedAudience.id,
           updatedAudience.keys[0].state,
           updatedAudience.keys[0].main
       )
-      console.log(updateMainKeyResponse.data)
       const updateSpareKeyResponse = await audiencesApi.updateKey(
+          updatedAudience.keys[1].id,
           updatedAudience.id,
           updatedAudience.keys[1].state,
           updatedAudience.keys[1].main
       )
-      console.log(updateSpareKeyResponse.data)
-      if (updateMainKeyResponse.status === 200 && updateSpareKeyResponse.status === 200) {
+      const updateAudienceResponse = await audiencesApi.updateAudience(
+          updatedAudience.id,
+          updatedAudience.number,
+          updatedAudience.capacity,
+          updatedAudience.signalisation,
+          updatedAudience.type
+      )
+      if (updateMainKeyResponse.status === 200 &&
+          updateSpareKeyResponse.status === 200 &&
+          updateAudienceResponse.status === 200) {
         this.$emit('update-audience-info', updatedAudience)
         this.editDialogVisible = false
       }

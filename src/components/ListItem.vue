@@ -3,7 +3,9 @@
       class="item"
       :class="{ 'active': active }"
       @click="toggleActive">
-    <div class="item-photo"></div>
+    <div v-if="isEmployee" class="item-photo">
+      <img :src="handleImagePreview(object.photo)" alt="img">
+    </div>
     <div class="info">
       <slot></slot>
     </div>
@@ -20,9 +22,16 @@ export default {
     active: {
       type: Boolean,
       required: true
+    },
+    isEmployee: {
+      type: Boolean,
+      required: true
     }
   },
   methods: {
+    handleImagePreview(file) {
+      return URL.createObjectURL(file)
+    },
     toggleActive() {
       this.$emit('toggle-active')
       this.$emit('show-info-card', this.object)
@@ -53,9 +62,12 @@ export default {
 }
 
 .item-photo {
-  background-image: url("../assets/default_photo.png");
-  width: 50px;
   height: 50px;
-  background-size: cover;
+  overflow: hidden;
+}
+
+.item-photo img {
+  height: 100%;
+  width: auto;
 }
 </style>

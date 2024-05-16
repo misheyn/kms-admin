@@ -1,5 +1,5 @@
 import { createStore } from 'vuex'
-import {indexModule} from "@/store/indexModule";
+import {indexModule} from "@/store/indexModule"
 
 export default createStore({
   modules: {

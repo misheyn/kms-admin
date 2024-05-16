@@ -16,7 +16,6 @@
           <option value="TEACHER">Преподаватель</option>
           <option value="SERVICE">Персонал</option>
           <option value="SECURITY">Охрана</option>
-          <option value="WATCHMAN">Вахтер</option>
         </select>
       </div>
       <div class="second__block" style="margin-left: 15px;">
@@ -39,13 +38,13 @@
         </div>
         <div class="choice__photo" style="margin-top: 5px;">
           <input ref="fileInput" type="file" @click="cancelImage" @change="handleFileChange" accept="image/*"/>
-          <div v-if="localEmployee.photo !== employee.photo" @click="cancelImage" class="cancel-cross"></div>
+          <div v-if="localEmployee.photo !== null" @click="cancelImage" class="cancel-cross"></div>
         </div>
         <div v-if="!localEmployee.photo" class="photo-preview">
-          <img :src="employee.photo" alt="current-img">
+          <img :src="defaultImage" alt="current-img">
         </div>
         <div v-else class="photo-preview">
-          <img :src="localEmployee.photo" alt="attached-img">
+          <img :src="handleImagePreview(localEmployee.photo)" alt="attached-img">
         </div>
       </div>
     </div>
@@ -57,7 +56,7 @@
       </my-button>
       <my-button
           class="save-btn"
-          @click="$emit('edit', this.localEmployee)">
+          @click="saveChanges">
         Сохранить изменения
       </my-button>
     </div>
@@ -67,6 +66,7 @@
 <script>
 import MyButton from "@/components/UI/MyButton.vue"
 import FormInput from "@/components/UI/FormInput.vue"
+import employeesApi from "@/api/employeesApi"
 
 export default {
   components: {FormInput, MyButton},
@@ -78,7 +78,8 @@ export default {
   },
   data() {
     return {
-      localEmployee: {}
+      localEmployee: {},
+      defaultImage: require("../../assets/default_photo.png")
     }
   },
   created() {
@@ -89,29 +90,32 @@ export default {
       this.localEmployee = {...this.employee}
       this.$emit('close')
     },
-    handleFileChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.convertImageToBase64(file)
-            .then(base64 => {
-              this.localEmployee.photo = base64
-            })
-            .catch(error => {
-              console.error('Ошибка при чтении файла:', error)
-            })
-      }
+    handleImagePreview(file) {
+      return URL.createObjectURL(file)
     },
-    convertImageToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = error => reject(error)
-      })
+    handleFileChange(event) {
+      const file = event.target.files[0]
+      if (file) this.localEmployee.photo = file
     },
     cancelImage() {
       this.localEmployee.photo = null
       this.$refs.fileInput.value = null
+    },
+    async saveChanges() {
+      let deleteImageId = 0
+      if ((this.localEmployee.photo === null || this.localEmployee.photo !== this.employee.photo) &&
+          this.localEmployee.imageId !== 103) deleteImageId = this.employee.imageId
+
+      if (this.localEmployee.photo !== this.employee.photo && this.localEmployee.photo !== null) {
+        const formData = new FormData()
+        formData.append('image', this.localEmployee.photo)
+        const createImageResponse = await employeesApi.createImage(formData)
+        if (createImageResponse.status === 200 || createImageResponse.status === 201)
+          this.localEmployee.imageId = createImageResponse.data.image_id
+      } else {
+        this.localEmployee.imageId = 103
+      }
+      this.$emit('edit', this.localEmployee, deleteImageId)
     }
   }
 }

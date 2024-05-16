@@ -27,13 +27,13 @@
       <div class="second__block" style="margin-left: 15px;">
         <div class="choice__photo" style="  margin-top: 5px;">
           <input ref="fileInput" type="file" @click="cancelImage" @change="handleFileChange" accept="image/*"/>
-          <div v-if="localWatchman.photo !== watchman.photo" @click="cancelImage" class="cancel-cross"></div>
+          <div v-if="localWatchman.photo !== null" @click="cancelImage" class="cancel-cross"></div>
         </div>
         <div v-if="!localWatchman.photo" class="photo-preview">
-          <img :src="watchman.photo" alt="current-img">
+          <img :src="defaultImage" alt="current-img">
         </div>
         <div v-else class="photo-preview">
-          <img :src="localWatchman.photo" alt="attached-img">
+          <img :src="handleImagePreview(localWatchman.photo)" alt="attached-img">
         </div>
       </div>
     </div>
@@ -53,8 +53,9 @@
 </template>
 
 <script>
-import FormInput from "@/components/UI/FormInput.vue";
-import MyButton from "@/components/UI/MyButton.vue";
+import FormInput from "@/components/UI/FormInput.vue"
+import MyButton from "@/components/UI/MyButton.vue"
+import employeesApi from "@/api/employeesApi"
 
 export default {
   components: {MyButton, FormInput},
@@ -68,40 +69,41 @@ export default {
     return {
       localWatchman: {},
       newPassword: '',
-      newPassword2: ''
+      newPassword2: '',
+      defaultImage: require("../../assets/default_photo.png")
     }
   },
   created() {
     this.localWatchman = {...this.watchman}
   },
   methods: {
-    saveChanges() {
+    async saveChanges() {
+      let deleteImageId = 0
+      if ((this.localWatchman.photo === null || this.localWatchman.photo !== this.watchman.photo) &&
+          this.localWatchman.imageId !== 103) deleteImageId = this.watchman.imageId
+
+      if (this.localWatchman.photo !== this.watchman.photo && this.localWatchman.photo !== null) {
+        const formData = new FormData()
+        formData.append('image', this.localWatchman.photo)
+        const createImageResponse = await employeesApi.createImage(formData)
+        if (createImageResponse.status === 200 || createImageResponse.status === 201)
+          this.localWatchman.imageId = createImageResponse.data.image_id
+      } else {
+        this.localWatchman.imageId = 103
+      }
       if (this.samePassword)
-        this.$emit('edit', this.localWatchman, this.newPassword)
+        this.$emit('edit', this.localWatchman, this.newPassword, deleteImageId)
     },
     cancelForm() {
       this.localWatchman = {...this.watchman}
       this.$emit('close')
     },
-    handleFileChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.convertImageToBase64(file)
-            .then(base64 => {
-              this.localWatchman.photo = base64
-            })
-            .catch(error => {
-              console.error('Ошибка при чтении файла:', error)
-            })
-      }
+    handleImagePreview(file) {
+      return URL.createObjectURL(file)
     },
-    convertImageToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = error => reject(error)
-      })
+    handleFileChange(event) {
+      const file = event.target.files[0]
+      if (file) this.localWatchman.photo = file
     },
     cancelImage() {
       this.localWatchman.photo = null
@@ -110,7 +112,7 @@ export default {
   },
   computed: {
     samePassword() {
-      return this.newPassword === this.newPassword2;
+      return this.newPassword === this.newPassword2
     }
   }
 }

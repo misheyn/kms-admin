@@ -43,7 +43,7 @@
           <img :src="defaultImage" alt="default-img">
         </div>
         <div v-else class="photo-preview">
-          <img :src="employee.photo" alt="attached-img">
+          <img :src="handleImagePreview(employee.photo)" alt="attached-img">
         </div>
       </div>
     </div>
@@ -71,7 +71,6 @@ export default {
         patronymic: '',
         photo: null,
         type: "",
-        qrData: '',
         IDNumber: '',
         IDStartDate: '',
         IDEndDate: ''
@@ -80,28 +79,34 @@ export default {
   },
   methods: {
     async addEmployee() {
-      if (!this.$refs.fileInput.value)
-        this.convertImageToBase64(this.defaultImage)
-            .then(base64 => {
-              this.employee.photo = base64
-            })
-            .catch(error => {
-              console.error('Ошибка при чтении файла:', error)
-            })
-      this.employee.qrData = this.employee.lastName + '56891'
-      const createResponse = await employeesApi.createEmployee(
+      let image_id = 103
+      if (this.employee.photo != null) {
+        const imageFormData = new FormData()
+        imageFormData.append('image', this.employee.photo)
+        const createImageResponse = await employeesApi.createImage(imageFormData)
+        image_id = createImageResponse.data.image_id
+      }
+
+      const createEmployeeResponse = await employeesApi.createEmployee(
           this.employee.firstName,
           this.employee.lastName,
           this.employee.patronymic,
-          this.employee.type)
-      this.$emit('create', createResponse)
+          image_id,
+          this.employee.type
+      )
+      const createIDResponse = await employeesApi.createID(
+          createEmployeeResponse.employee_id,
+          this.employee.IDNumber,
+          this.employee.IDStartDate,
+          this.employee.IDEndDate
+      )
+      this.$emit('create', createIDResponse)
       this.employee = {
         lastName: '',
         firstName: '',
         patronymic: '',
         photo: null,
         type: "",
-        qrData: '',
         IDNumber: '',
         IDStartDate: '',
         IDEndDate: ''
@@ -109,23 +114,10 @@ export default {
     },
     handleFileChange(event) {
       const file = event.target.files[0]
-      if (file) {
-        this.convertImageToBase64(file)
-            .then(base64 => {
-              this.employee.photo = base64
-            })
-            .catch(error => {
-              console.error('Ошибка при чтении файла:', error)
-            })
-      }
+      if (file) this.employee.photo = file
     },
-    convertImageToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = error => reject(error)
-      })
+    handleImagePreview(file) {
+      return URL.createObjectURL(file)
     },
     cancelImage() {
       this.employee.photo = null

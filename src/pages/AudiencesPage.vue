@@ -61,45 +61,42 @@ export default {
       if (tab === 'audiences') this.$router.push('/audiences')
       else this.$router.push('/employees')
     },
-    addAudience (audience) {
+    addAudience(audience) {
       this.audiences.push(audience)
       this.dialogVisible = false
     },
-    showInfoCard (audience) {
+    showInfoCard(audience) {
       this.selectedAudience = audience
     },
-    removeAudience (audience) {
+    removeAudience(audience) {
       this.audiences = this.audiences.filter(aud => aud.id !== audience.id)
     },
     async fetchAudiences() {
       this.isLoading = true
       const getAudiencesResponse = await audiencesApi.getAllKeys()
-      console.log(getAudiencesResponse)
 
-      if (getAudiencesResponse && Array.isArray(getAudiencesResponse)) {
-        getAudiencesResponse.forEach(it => {
-          if (it.audience) {
-            const index = this.audiences.findIndex(audience => audience.id === (it.audience.audience_id || it.audience))
-            if (index !== -1) {
-              const key = { id: it.key_id, state: it.keyState, main: it.main }
-              this.audiences[index].keys.push(key)
-            } else {
-              const audience = {
-                id: it.audience.audience_id,
-                number: it.audience.number,
-                floor: it.audience.floor,
-                capacity: it.audience.capacity,
-                signalisation: it.audience.signalisation,
-                type: it.audience.audienceType,
-                keys: [
-                  { id: it.key_id, state: it.keyState, main: it.main }
-                ]
-              }
-              this.audiences.push(audience)
+      getAudiencesResponse.forEach(it => {
+        if (it.audience && it.audience.exist) {
+          const index = this.audiences.findIndex(audience => audience.id === (it.audience.audience_id || it.audience))
+          if (index !== -1) {
+            const key = {id: it.key_id, state: it.key_state, main: it.main}
+            this.audiences[index].keys.push(key)
+          } else {
+            const audience = {
+              id: it.audience.audience_id,
+              number: it.audience.number,
+              capacity: it.audience.capacity,
+              signalisation: it.audience.signalisation,
+              type: it.audience.audience_type,
+              keys: [
+                {id: it.key_id, state: it.key_state, main: it.main, qrData: it.qr}
+              ]
             }
+            this.audiences.push(audience)
           }
-        })
-      }
+        }
+      })
+
       this.isLoading = false
     },
     updateAudienceInfo(updatedAudience) {
@@ -111,7 +108,7 @@ export default {
     }
   },
   computed: {
-    searchedAudience () {
+    searchedAudience() {
       const query = this.searchQuery.toLowerCase()
       return [...this.audiences].filter(audience => {
         return Object.values(audience).some(value => {

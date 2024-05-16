@@ -9,8 +9,10 @@
           placeholder="Вместимость"/>
       <div style="padding: 3px 5px 0">
         <label style="margin-right: 5px">Сигнализация:</label>
-        <input v-model="localAudience.signalisation" type="radio" id="sign-yes" name="signalisation" value="ON">
-        <label for="sign-yes"> Есть </label>
+        <input v-model="localAudience.signalisation" type="radio" id="sign-on" name="signalisation" value="ON">
+        <label for="sign-on"> Включена </label>
+        <input v-model="localAudience.signalisation" type="radio" id="sign-off" name="signalisation" value="OFF">
+        <label for="sign-off"> Выключена </label>
         <input v-model="localAudience.signalisation" type="radio" id="sign-no" name="signalisation" value="NONE">
         <label for="sign-no"> Нет </label>
       </div>

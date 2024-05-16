@@ -39,6 +39,7 @@ import AddWatchmanForm from "@/components/watchmen/AddWatchmanForm.vue"
 import WatchmanInfoCard from "@/components/watchmen/WatchmanInfoCard.vue"
 import watchmenApi from "@/api/watchmenApi"
 import ListOfCards from "@/components/ListOfCards.vue"
+import employeesApi from "@/api/employeesApi"
 
 export default {
   components: {ListOfCards, WatchmanInfoCard, AddWatchmanForm, CreateDialog, SearchBar, MyButton},
@@ -52,51 +53,60 @@ export default {
     }
   },
   methods: {
-    addWatchman (user) {
+    async addWatchman(user) {
+      const getImageResponse = await employeesApi.getImage(user.employee.image.image_id)
       const watchman = {
         id: user.user_id,
         lastName: user.employee.second_name,
         firstName: user.employee.first_name,
         patronymic: user.employee.middle_name,
+        imageId: user.employee.image.image_id,
+        photo: getImageResponse,
         login: user.username
       };
       this.watchmen.push(watchman)
       this.dialogVisible = false
     },
-    showInfoCard (watchman) {
+    showInfoCard(watchman) {
       this.selectedWatchman = watchman
     },
-    removeWatchman (watchman) {
+    removeWatchman(watchman) {
       this.watchmen = this.watchmen.filter(wm => wm.id !== watchman.id)
     },
-    async fetchWatchmen () {
-        this.isLoading = true
-        const getUsersResponse = await watchmenApi.getAllUsers()
-        console.log(getUsersResponse)
-        getUsersResponse.forEach(user => {
-          if (user.employee && user.employee.employee_type === "WATCHMAN" && user.employee.employee_status === "WORKS") {
-            const watchman = {
-              id: user.user_id,
-              lastName: user.employee.second_name,
-              firstName: user.employee.first_name,
-              patronymic: user.employee.middle_name,
-              login: user.username
-            }
-            this.watchmen.push(watchman)
+    async fetchWatchmen() {
+      this.isLoading = true
+      const getImagesResponse = await employeesApi.getAllImages()
+      console.log(getImagesResponse)
+      const getUsersResponse = await watchmenApi.getAllUsers()
+      console.log(getUsersResponse)
+      for (const user of getUsersResponse) {
+        if (user.employee && user.employee.employee_type === "WATCHMAN" && user.employee.employee_status === "WORKS") {
+          const getImageResponse = await employeesApi.getImage(user.employee.image.image_id)
+          const watchman = {
+            id: user.user_id,
+            lastName: user.employee.second_name,
+            firstName: user.employee.first_name,
+            patronymic: user.employee.middle_name,
+            imageId: user.employee.image.image_id,
+            photo: getImageResponse,
+            login: user.username
           }
-        })
-        this.isLoading = false
+          this.watchmen.push(watchman)
+        }
+      }
+      this.isLoading = false
     },
-    updateWatchmanInfo(updatedWatchman) {
+    async updateWatchmanInfo(updatedWatchman) {
       const index = this.watchmen.findIndex(w => w.id === updatedWatchman.id)
       if (index !== -1) {
         this.watchmen.splice(index, 1, updatedWatchman)
       }
+      updatedWatchman.photo = await employeesApi.getImage(updatedWatchman.imageId)
       this.showInfoCard(updatedWatchman)
     }
   },
   computed: {
-    searchedWatchmen () {
+    searchedWatchmen() {
       const query = this.searchQuery.toLowerCase();
       return [...this.watchmen].filter(watchman => {
         return Object.values(watchman).some(value => {

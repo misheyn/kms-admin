@@ -22,13 +22,13 @@
       <div class="second__block" style="margin-left: 15px;">
         <div class="choice__photo" style="margin-top: 5px;">
           <input ref="fileInput" type="file" @click="cancelImage" @change="handleFileChange" accept="image/*"/>
-          <div v-if="watchman.photo !== defaultImage" @click="cancelImage" class="cancel-cross"></div>
+          <div v-if="watchman.photo !== null" @click="cancelImage" class="cancel-cross"></div>
         </div>
         <div v-if="!watchman.photo" class="photo-preview">
           <img :src="defaultImage" alt="default-img">
         </div>
         <div v-else class="photo-preview">
-          <img :src="watchman.photo" alt="attached-img">
+          <img :src="handleImagePreview(watchman.photo)" alt="attached-img">
         </div>
       </div>
     </div>
@@ -41,9 +41,10 @@
 </template>
 
 <script>
-import MyButton from "@/components/UI/MyButton.vue";
-import FormInput from "@/components/UI/FormInput.vue";
-import watchmenApi from "@/api/watchmenApi";
+import MyButton from "@/components/UI/MyButton.vue"
+import FormInput from "@/components/UI/FormInput.vue"
+import watchmenApi from "@/api/watchmenApi"
+import employeesApi from "@/api/employeesApi"
 
 export default {
   components: {FormInput, MyButton},
@@ -62,15 +63,24 @@ export default {
   },
   methods: {
     async addWatchman() {
-      const watchmanResponse = await watchmenApi.createWatchman(
+      let image_id = 103
+      if (this.watchman.photo != null) {
+        const imageFormData = new FormData()
+        imageFormData.append('image', this.watchman.photo)
+        const createImageResponse = await employeesApi.createImage(imageFormData)
+        image_id = createImageResponse.data.image_id
+      }
+      const createWatchmanResponse = await employeesApi.createEmployee(
           this.watchman.firstName,
           this.watchman.lastName,
-          this.watchman.patronymic)
-      const userResponse = await watchmenApi.createUser(
-          watchmanResponse.employee_id,
+          this.watchman.patronymic,
+          image_id,
+          "WATCHMAN")
+      const createUserResponse = await watchmenApi.createUser(
+          createWatchmanResponse.employee_id,
           this.watchman.login,
           this.watchman.password)
-      this.$emit('create', userResponse)
+      this.$emit('create', createUserResponse)
       this.watchman = {
         lastName: '',
         firstName: '',
@@ -81,24 +91,11 @@ export default {
       }
     },
     handleFileChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.convertImageToBase64(file)
-            .then(base64 => {
-              this.watchman.photo = base64
-            })
-            .catch(error => {
-              console.error('Ошибка при чтении файла:', error)
-            })
-      }
+      const file = event.target.files[0]
+      if (file) this.watchman.photo = file
     },
-    convertImageToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = error => reject(error)
-      })
+    handleImagePreview(file) {
+      return URL.createObjectURL(file)
     },
     cancelImage() {
       this.watchman.photo = null
