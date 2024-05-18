@@ -15,38 +15,38 @@
       v-model="searchQuery"
       placeholder="Поиск..."/>
     <div class="info__wrapper">
-      <div v-if="employees.length > 0" class="employee-list" v-scroll="handleScroll">
+      <div v-if="employees.length > 0 && !editListMode" class="employee-list" v-scroll="handleScroll">
         <employee-list-item
-            v-for="(item, index) in employees"
+            v-for="(item, index) in searchedEmployees"
             :employee="item"
-            :key="index"/>
+            :key="index"
+            :is-edit-mode="editListMode"/>
       </div>
-      <h3 v-else style="margin: 5px">В этом подразделении нет сотрудников</h3>
+      <h4 v-if="employees.length <= 0 && !editListMode" style="margin: 5px">В этом подразделении нет сотрудников</h4>
+      <div v-if="editListMode" class="employee-list" v-scroll="handleScroll">
+        <employee-list-item
+            v-for="(item, index) in searchedEmployees"
+            :employee="item"
+            :key="index"
+            :is-edit-mode="editListMode"
+            @chosen="handleChosen"/>
+      </div>
     </div>
     <div class="btn__wrapper">
-<!--      <my-button class="btn-remove" @click="removeDialogVisible = true">Удалить</my-button>-->
       <my-button v-if="!editListMode" class="btn-edit" @click="openEditMode">Редактировать</my-button>
-      <my-button v-if="editListMode">Отменить</my-button>
-      <my-button v-if="editListMode">Сохранить изменения</my-button>
+      <my-button
+          v-if="editListMode"
+          class="btn-cancel"
+          @click="editListMode = false">Отменить</my-button>
+      <my-button
+          v-if="editListMode"
+          class="btn-save"
+          @click="saveChanges">Сохранить изменения</my-button>
     </div>
-<!--    <create-dialog v-model:show="editDialogVisible">-->
-<!--      <edit-division-form-->
-<!--          :division="division"-->
-<!--          @edit="editDivision"-->
-<!--          @close="editDialogVisible = false"/>-->
-<!--    </create-dialog>-->
-<!--    <create-dialog v-model:show="removeDialogVisible">-->
-<!--      <confirm-delete-form-->
-<!--          :element="'это подразделение'"-->
-<!--          @delete="removeDivision"-->
-<!--          @close="removeDialogVisible = false"/>-->
-<!--    </create-dialog>-->
   </div>
 </template>
 
 <script>
-// import CreateDialog from "@/components/UI/CreateDialog.vue"
-// import ConfirmDeleteForm from "@/components/ConfirmDeleteForm.vue"
 import MyButton from "@/components/UI/MyButton.vue"
 import {mapMutations, mapState} from "vuex"
 import SearchBar from "@/components/UI/SearchBar.vue"
@@ -56,7 +56,7 @@ import EmployeeListItem from "@/components/EmployeeListItem.vue"
 import vScroll from "@/directives/vScroll"
 
 export default {
-  components: {EmployeeListItem, SearchBar, MyButton/*, ConfirmDeleteForm, CreateDialog*/},
+  components: {EmployeeListItem, SearchBar, MyButton},
   directives: {
     'v-scroll': vScroll
   },
@@ -69,7 +69,9 @@ export default {
       editListMode: false,
       newDivisionName: '',
       employees: [],
-      allEmployees: []
+      allEmployees: [],
+      addEmployees: [],
+      removeEmployees: []
     }
   },
   props: {
@@ -88,14 +90,6 @@ export default {
       this.setActiveIndex(null)
     },
     handleScroll(){},
-    // async removeEmployee() {
-    //   const deleteResponse = await employeesApi.deleteEmployee(this.employee.id, this.employee.firstName,
-    //       this.employee.lastName, this.employee.patronymic, this.employee.type)
-    //   if (deleteResponse.status === 200) {
-    //     this.$emit('remove', this.employee)
-    //     this.closeInfoCard()
-    //   }
-    // },
     async updateDivisionName() {
       const updatedDivision = {...this.division}
       const updateResponse = await divisionsApi.updateDivision(this.division.id, this.newDivisionName)
@@ -107,18 +101,27 @@ export default {
       }
     },
     async openEditMode() {
+      this.allEmployees = []
       const getEmployeesResponse = await employeesApi.getAllEmployees()
       console.log(getEmployeesResponse)
 
       for (const it of getEmployeesResponse) {
         if (it.employee_status === "WORKS" && it.employee_type !== "WATCHMAN") {
           const getImageResponse = await employeesApi.getImage(it.image.image_id)
+          let flag = false
+          if (it.divisions) {
+            it.divisions.forEach(itDiv => {
+              if (itDiv.division_id === this.division.id) flag = true
+            })
+          }
           const employee = {
             id: it.employee_id,
             lastName: it.second_name,
             firstName: it.first_name,
             patronymic: it.middle_name,
-            photo: getImageResponse
+            photo: getImageResponse,
+            inDivision: flag,
+            isChosen: false
           }
           this.allEmployees.push(employee)
         }
@@ -130,24 +133,70 @@ export default {
       console.log(getEmployeesResponse)
 
       for (const it of getEmployeesResponse) {
-        if (it.employee_status === "WORKS" && it.employee_type !== "WATCHMAN" && it.divisions.division_id === this.division.id) {
-          const getImageResponse = await employeesApi.getImage(it.image.image_id)
-          const employee = {
-            id: it.employee_id,
-            lastName: it.second_name,
-            firstName: it.first_name,
-            patronymic: it.middle_name,
-            photo: getImageResponse
+        if (it.employee_status === "WORKS" && it.employee_type !== "WATCHMAN" && it.divisions) {
+          for (const itDiv of it.divisions) {
+            if (itDiv.division_id === this.division.id) {
+              const getImageResponse = await employeesApi.getImage(it.image.image_id)
+              const employee = {
+                id: it.employee_id,
+                lastName: it.second_name,
+                firstName: it.first_name,
+                patronymic: it.middle_name,
+                photo: getImageResponse
+              }
+              this.employees.push(employee)
+            }
           }
-          this.employees.push(employee)
         }
       }
+    },
+    handleChosen(employee) {
+      if (employee.isChosen && !employee.inDivision) this.addEmployees.push(employee)
+      else if (!employee.isChosen && !employee.inDivision)
+        this.addEmployees = this.addEmployees.filter(ae => ae.id !== employee.id)
+      if (employee.isChosen && employee.inDivision) this.removeEmployees.push(employee)
+      else if (!employee.isChosen && employee.inDivision)
+        this.removeEmployees = this.removeEmployees.filter(re => re.id !== employee.id)
+    },
+    async saveChanges() {
+      if (this.addEmployees.length > 0) {
+        for (const it of this.addEmployees) {
+          const addEmployeeResponse = await employeesApi.addEmployeeToDivision(this.division.id, it.id)
+          if (addEmployeeResponse.status !== 200)
+            alert(`Сотрудник ${it.lastName} ${it.firstName} ${it.patronymic} не добавлен в подразделение ${this.division.name}. Попробуйте снова`)
+          this.employees.push(it)
+        }
+      }
+      if (this.removeEmployees.length > 0) {
+        for (const it of this.removeEmployees) {
+          const deleteEmployeeResponse = await employeesApi.deleteEmployeeFromDivision(this.division.id, it.id)
+          console.log(deleteEmployeeResponse)
+          if (deleteEmployeeResponse.status !== 200 || deleteEmployeeResponse.status !== 204)
+            alert(`Сотрудник ${it.lastName} ${it.firstName} ${it.patronymic} не удален из подразделения ${this.division.name}. Попробуйте снова`)
+          this.employees = this.employees.filter(e => e.id !== it.id)
+        }
+      }
+      this.editListMode = false
     }
   },
   computed: {
     ...mapState({
       activeIndex: state => state.index.activeIndex
-    })
+    }),
+    searchedEmployees() {
+      const query = this.searchQuery.toLowerCase()
+      let currentArray = []
+      if (this.editListMode) currentArray = [...this.allEmployees]
+      else currentArray = [...this.employees]
+      return currentArray.filter(employee => {
+        return Object.values(employee).some(value => {
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(query)
+          }
+          return false
+        })
+      })
+    }
   },
   mounted() {
     this.getEmployees()
@@ -183,12 +232,12 @@ export default {
   justify-content: center;
 }
 
-.btn-remove {
-  color: red;
-  border-color: red;
+.btn-cancel {
+  color: gray;
+  border-color: gray;
 }
 
-.btn-edit {
+.btn-edit, .btn-save {
   color: blue;
   border-color: blue;
   margin-left: 10px;

@@ -92,6 +92,16 @@ export default class employeesApi {
         }
     }
 
+    static async getEmployee(id) {
+        try {
+            return await axios.get(`https://kms2-production.up.railway.app/api/employees/${id}`)
+                .then(response => response.data)
+        } catch (error) {
+            alert("Error!")
+            console.error(error)
+        }
+    }
+
     static async updateEmployee(id, firstName, lastName, patronymic, imageId, type, status) {
         try {
             return await axios.put(`https://kms2-production.up.railway.app/api/employees/${id}`, {
@@ -118,6 +128,26 @@ export default class employeesApi {
                 not_expired: true,
                 employee_id: employeeId
             })
+                .then(response => response)
+        } catch (error) {
+            alert("Error!")
+            console.error(error)
+        }
+    }
+
+    static async addEmployeeToDivision(divisionId, employeeId) {
+        try {
+            return await axios.put(`https://kms2-production.up.railway.app/api/divisions/${divisionId}/employees/${employeeId}`)
+                .then(response => response)
+        } catch (error) {
+            alert("Error!")
+            console.error(error)
+        }
+    }
+
+    static async deleteEmployeeFromDivision(divisionId, employeeId) {
+        try {
+            return await axios.delete(`https://kms2-production.up.railway.app/api/divisions/${divisionId}/employees/${employeeId}`)
                 .then(response => response)
         } catch (error) {
             alert("Error!")

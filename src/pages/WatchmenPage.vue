@@ -107,15 +107,15 @@ export default {
   },
   computed: {
     searchedWatchmen() {
-      const query = this.searchQuery.toLowerCase();
+      const query = this.searchQuery.toLowerCase()
       return [...this.watchmen].filter(watchman => {
         return Object.values(watchman).some(value => {
           if (typeof value === 'string') {
-            return value.toLowerCase().includes(query);
+            return value.toLowerCase().includes(query)
           }
-          return false;
-        });
-      });
+          return false
+        })
+      })
     }
   },
   mounted() {
