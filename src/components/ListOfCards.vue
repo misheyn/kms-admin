@@ -6,15 +6,22 @@
           :object="item"
           :key="index"
           :active="activeIndex === index"
-          :is-employee="cardType === 'employee' || cardType === 'watchman'"
-          @show-info-card="$emit('show-info-card', item)"
+          :is-employee="cardType === 'employee' || cardType === 'watchman' || cardType === 'permissionEmployee'"
+          @show-info-card="handleShowInfoCard(item, cardType)"
           @toggle-active="toggleActive(index)">
-        <div v-if="cardType === 'employee' || cardType === 'watchman'"><b>{{ item.lastName }} {{ item.firstName }}</b></div>
+        <div
+            v-if="cardType === 'employee' || cardType === 'watchman' || cardType === 'permissionEmployee'"
+            class="first-line">{{ item.lastName }} {{ item.firstName }}</div>
         <div v-if="cardType === 'employee'">Должность: {{ convertType(item.type) }}</div>
         <div v-if="cardType === 'watchman'">Логин: {{ item.login }}</div>
         <div v-if="cardType === 'audience'">{{ item.number }}</div>
         <div v-if="cardType === 'audience'">Тип: {{ convertType(item.type) }}</div>
-        <div v-if="cardType === 'division'">{{ item.name }}</div>
+        <div v-if="cardType === 'division' || cardType === 'permissionDivision'" class="first-line">
+          {{ item.name }}</div>
+        <div v-if="cardType === 'permissionEmployee'">
+          Должность: {{ convertType(item.type) }}, Разрешений: {{ item.permissionsNumber }}</div>
+        <div v-if="cardType === 'permissionDivision'">
+          Разрешений: {{ item.permissionsNumber }}</div>
       </list-item>
     </transition-group>
   </div>
@@ -36,11 +43,22 @@ export default {
       type: Array,
       required: true
     },
-    element: String,
-    cardType: String
+    element: {
+      type: String,
+      required: true
+    },
+    cardType: {
+      type: String,
+      required: true
+    }
   },
   methods: {
     handleScroll(){},
+    handleShowInfoCard(item, cardType) {
+      this.$emit('show-info-card', item)
+      if (cardType === 'permissionEmployee' || cardType === 'permissionDivision' || cardType === 'division')
+        this.$emit('get-list')
+    },
     toggleActive(index) {
       if (this.activeIndex !== index) this.setActiveIndex(index)
     },
@@ -55,7 +73,7 @@ export default {
       else if (type === "STUDY") return 'Учебная'
       else if (type === "MULTIMEDIA") return 'Мультимедийная'
       else if (type === "LAB") return 'Лаборатория'
-      else if (type === "ADMINISTRATION") return 'Административная'
+      else if (type === "ADMINISTRATION") return 'Служебная'
     }
   },
   computed: {
@@ -92,5 +110,10 @@ export default {
 
 .object-list-move {
   transition: transform 0.4s ease;
+}
+
+.first-line {
+  font-weight: bold;
+  font-size: large;
 }
 </style>

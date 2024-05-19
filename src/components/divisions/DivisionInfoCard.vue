@@ -15,22 +15,31 @@
       v-model="searchQuery"
       placeholder="Поиск..."/>
     <div class="info__wrapper">
-      <div v-if="employees.length > 0 && !editListMode" class="employee-list" v-scroll="handleScroll">
-        <employee-list-item
+      <div v-if="employees.length > 0 && !editListMode && !isLoading" class="employee-list" v-scroll="handleScroll">
+        <edit-list-item
             v-for="(item, index) in searchedEmployees"
-            :employee="item"
-            :key="index"
-            :is-edit-mode="editListMode"/>
-      </div>
-      <h4 v-if="employees.length <= 0 && !editListMode" style="margin: 5px">В этом подразделении нет сотрудников</h4>
-      <div v-if="editListMode" class="employee-list" v-scroll="handleScroll">
-        <employee-list-item
-            v-for="(item, index) in searchedEmployees"
-            :employee="item"
+            :object="item"
             :key="index"
             :is-edit-mode="editListMode"
-            @chosen="handleChosen"/>
+            :photo="true">
+          {{item.lastName}} {{item.firstName}} {{item.patronymic}}
+          </edit-list-item>
       </div>
+      <h4 v-else-if="employees.length <= 0 && !editListMode && !isLoading" style="margin: 5px">
+        В этом подразделении нет сотрудников</h4>
+      <h4 v-else-if="!editListMode && isLoading">Загрузка...</h4>
+      <div v-if="editListMode && !isLoading" class="employee-list" v-scroll="handleScroll">
+        <edit-list-item
+            v-for="(item, index) in searchedEmployees"
+            :object="item"
+            :key="index"
+            :is-edit-mode="editListMode"
+            :photo="true"
+            @chosen="handleChosen">
+          {{item.lastName}} {{item.firstName}} {{item.patronymic}}
+        </edit-list-item>
+      </div>
+      <h4 v-else-if="editListMode && isLoading">Загрузка...</h4>
     </div>
     <div class="btn__wrapper">
       <my-button v-if="!editListMode" class="btn-edit" @click="openEditMode">Редактировать</my-button>
@@ -52,23 +61,21 @@ import {mapMutations, mapState} from "vuex"
 import SearchBar from "@/components/UI/SearchBar.vue"
 import divisionsApi from "@/api/divisionsApi"
 import employeesApi from "@/api/employeesApi"
-import EmployeeListItem from "@/components/EmployeeListItem.vue"
+import EditListItem from "@/components/EditListItem.vue"
 import vScroll from "@/directives/vScroll"
 
 export default {
-  components: {EmployeeListItem, SearchBar, MyButton},
+  components: {EditListItem, SearchBar, MyButton},
   directives: {
     'v-scroll': vScroll
   },
   data() {
     return {
-      editDialogVisible: false,
-      removeDialogVisible: false,
+      isLoading: false,
       searchQuery: '',
       editNameMode: false,
       editListMode: false,
       newDivisionName: '',
-      employees: [],
       allEmployees: [],
       addEmployees: [],
       removeEmployees: []
@@ -78,9 +85,13 @@ export default {
     division: {
       type: Object,
       required: true
+    },
+    employees: {
+      type: Array,
+      required: true
     }
   },
-  emits: ['close-info-card', 'remove', 'update-division-name'],
+  emits: ['close-info-card', 'update-division-name', 'update-employees'],
   methods: {
     ...mapMutations({
       setActiveIndex: 'index/setActiveIndex'
@@ -101,6 +112,7 @@ export default {
       }
     },
     async openEditMode() {
+      this.isLoading = true
       this.allEmployees = []
       const getEmployeesResponse = await employeesApi.getAllEmployees()
       console.log(getEmployeesResponse)
@@ -127,28 +139,7 @@ export default {
         }
       }
       this.editListMode = true
-    },
-    async getEmployees() {
-      const getEmployeesResponse = await employeesApi.getAllEmployees()
-      console.log(getEmployeesResponse)
-
-      for (const it of getEmployeesResponse) {
-        if (it.employee_status === "WORKS" && it.employee_type !== "WATCHMAN" && it.divisions) {
-          for (const itDiv of it.divisions) {
-            if (itDiv.division_id === this.division.id) {
-              const getImageResponse = await employeesApi.getImage(it.image.image_id)
-              const employee = {
-                id: it.employee_id,
-                lastName: it.second_name,
-                firstName: it.first_name,
-                patronymic: it.middle_name,
-                photo: getImageResponse
-              }
-              this.employees.push(employee)
-            }
-          }
-        }
-      }
+      this.isLoading = false
     },
     handleChosen(employee) {
       if (employee.isChosen && !employee.inDivision) this.addEmployees.push(employee)
@@ -164,7 +155,7 @@ export default {
           const addEmployeeResponse = await employeesApi.addEmployeeToDivision(this.division.id, it.id)
           if (addEmployeeResponse.status !== 200)
             alert(`Сотрудник ${it.lastName} ${it.firstName} ${it.patronymic} не добавлен в подразделение ${this.division.name}. Попробуйте снова`)
-          this.employees.push(it)
+          this.$emit('update-employees', it, 'push')
         }
       }
       if (this.removeEmployees.length > 0) {
@@ -173,7 +164,7 @@ export default {
           console.log(deleteEmployeeResponse)
           if (deleteEmployeeResponse.status !== 200 || deleteEmployeeResponse.status !== 204)
             alert(`Сотрудник ${it.lastName} ${it.firstName} ${it.patronymic} не удален из подразделения ${this.division.name}. Попробуйте снова`)
-          this.employees = this.employees.filter(e => e.id !== it.id)
+          this.$emit('update-employees', it, 'remove')
         }
       }
       this.editListMode = false
@@ -199,7 +190,6 @@ export default {
     }
   },
   mounted() {
-    this.getEmployees()
     this.newDivisionName = this.division.name
   }
 }

@@ -96,14 +96,11 @@ export default {
           }
         }
       })
-
       this.isLoading = false
     },
     updateAudienceInfo(updatedAudience) {
       const index = this.audiences.findIndex(e => e.id === updatedAudience.id)
-      if (index !== -1) {
-        this.audiences.splice(index, 1, updatedAudience)
-      }
+      if (index !== -1) this.audiences.splice(index, 1, updatedAudience)
       this.showInfoCard(updatedAudience)
     }
   },

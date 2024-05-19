@@ -21,15 +21,16 @@
           :objects="searchedDivisions"
           :element="'подразделений'"
           :card-type="'division'"
-          @show-info-card="showInfoCard"/>
+          @show-info-card="showInfoCard"
+          @get-list="getEmployees"/>
       <h2 v-else style="margin: 15px 5px">Загрузка...</h2>
       <division-info-card
           v-if="selectedDivision"
           :division="selectedDivision"
+          :employees="employees"
           @close-info-card="this.selectedDivision = null"
-          @update-division-name="updateDivisionName"/>
-<!--          @remove="removeEmployee"-->
-
+          @update-division-name="updateDivisionName"
+          @update-employees="updateEmployees"/>
     </div>
   </div>
 </template>
@@ -42,12 +43,14 @@ import MyButton from "@/components/UI/MyButton.vue"
 import divisionsApi from "@/api/divisionsApi"
 import AddDivisionForm from "@/components/divisions/AddDivisionForm.vue"
 import DivisionInfoCard from "@/components/divisions/DivisionInfoCard.vue"
+import employeesApi from "@/api/employeesApi"
 
 export default {
   components: {AddDivisionForm, MyButton, SearchBar, ListOfCards, CreateDialog, DivisionInfoCard},
   data() {
     return {
       searchQuery: '',
+      employees: [],
       divisions: [],
       isLoading: false,
       dialogVisible: false,
@@ -66,9 +69,29 @@ export default {
     showInfoCard (division) {
       this.selectedDivision = division
     },
-    // removeEmployee (employee) {
-    //   this.employees = this.employees.filter(emp => emp.id !== employee.id)
-    // },
+    async getEmployees() {
+      this.employees = []
+      const getEmployeesResponse = await employeesApi.getAllEmployees()
+      console.log(getEmployeesResponse)
+
+      for (const it of getEmployeesResponse) {
+        if (it.employee_status === "WORKS" && it.employee_type !== "WATCHMAN" && it.divisions) {
+          for (const itDiv of it.divisions) {
+            if (itDiv.division_id === this.selectedDivision.id) {
+              const getImageResponse = await employeesApi.getImage(it.image.image_id)
+              const employee = {
+                id: it.employee_id,
+                lastName: it.second_name,
+                firstName: it.first_name,
+                patronymic: it.middle_name,
+                photo: getImageResponse
+              }
+              this.employees.push(employee)
+            }
+          }
+        }
+      }
+    },
     async fetchDivisions () {
       this.isLoading = true
       const getDivisionsResponse = await divisionsApi.getAllDivisions()
@@ -84,11 +107,13 @@ export default {
     },
     updateDivisionName(updatedDivision) {
       const index = this.divisions.findIndex(d => d.id === updatedDivision.id)
-      if (index !== -1) {
-        this.divisions.splice(index, 1, updatedDivision)
-      }
+      if (index !== -1) this.divisions.splice(index, 1, updatedDivision)
       this.showInfoCard(updatedDivision)
     },
+    updateEmployees (division, type) {
+      if (type === 'push') this.divisions.push(division)
+      else if (type === 'remove') this.divisions.splice(this.divisions.indexOf(division), 1)
+    }
   },
   computed: {
     searchedDivisions () {

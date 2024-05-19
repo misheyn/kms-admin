@@ -126,9 +126,7 @@ export default {
     },
     async updateEmployeeInfo(updatedEmployee) {
       const index = this.employees.findIndex(e => e.id === updatedEmployee.id)
-      if (index !== -1) {
-        this.employees.splice(index, 1, updatedEmployee)
-      }
+      if (index !== -1) this.employees.splice(index, 1, updatedEmployee)
       updatedEmployee.photo = await employeesApi.getImage(updatedEmployee.imageId)
       this.showInfoCard(updatedEmployee)
     },

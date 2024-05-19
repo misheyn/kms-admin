@@ -1,23 +1,23 @@
 <template>
   <div class="item">
     <div class="item__content" style="display: flex; align-items: center;">
-      <div class="photo">
-        <img :src="handleImagePreview(employee.photo)" alt="img">
+      <div v-if="photo" class="photo">
+        <img :src="handleImagePreview(object.photo)" alt="img">
       </div>
       <div class="info">
-        {{employee.lastName}} {{employee.firstName}} {{employee.patronymic}}
+        <slot></slot>
       </div>
     </div>
     <div v-if="isEditMode" class="icon__wrapper">
       <div
-          v-if="employee.inDivision"
+          v-if="object.inDivision || object.permission"
           class="remove-icon"
-          :class="{'chosen': localEmployee.isChosen}"
+          :class="{'chosen': localObject.isChosen}"
           @click="toggleActive"></div>
       <div
           v-else
           class="add-icon"
-          :class="{'chosen': localEmployee.isChosen}"
+          :class="{'chosen': localObject.isChosen}"
           @click="toggleActive"></div>
     </div>
   </div>
@@ -27,18 +27,22 @@
 export default {
   data() {
     return {
-      localEmployee: {}
+      localObject: {}
     }
   },
   created() {
-    this.localEmployee = {...this.employee}
+    this.localObject = {...this.object}
   },
   props: {
-    employee: {
+    object: {
       type: Object,
       required: true
     },
     isEditMode: {
+      type: Boolean,
+      required: true
+    },
+    photo: {
       type: Boolean,
       required: true
     }
@@ -48,8 +52,8 @@ export default {
       return URL.createObjectURL(file)
     },
     toggleActive() {
-      this.localEmployee.isChosen = !this.localEmployee.isChosen
-      this.$emit('chosen', this.localEmployee)
+      this.localObject.isChosen = !this.localObject.isChosen
+      this.$emit('chosen', this.localObject)
     }
   }
 }
@@ -101,5 +105,4 @@ export default {
 .add-icon.chosen {
   background-image: url("../assets/green_plus.png");
 }
-
 </style>

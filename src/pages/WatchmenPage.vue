@@ -98,9 +98,7 @@ export default {
     },
     async updateWatchmanInfo(updatedWatchman) {
       const index = this.watchmen.findIndex(w => w.id === updatedWatchman.id)
-      if (index !== -1) {
-        this.watchmen.splice(index, 1, updatedWatchman)
-      }
+      if (index !== -1) this.watchmen.splice(index, 1, updatedWatchman)
       updatedWatchman.photo = await employeesApi.getImage(updatedWatchman.imageId)
       this.showInfoCard(updatedWatchman)
     }

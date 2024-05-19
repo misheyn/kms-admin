@@ -29,6 +29,16 @@ export default class audiencesApi {
         }
     }
 
+    static async getAllAudiences() {
+        try {
+            return await axios.get('https://kms2-production.up.railway.app/api/audiences')
+                .then(response => response.data)
+        } catch (error) {
+            alert("Error!")
+            console.error(error)
+        }
+    }
+
     static async getAllKeys() {
         try {
             return await axios.get('https://kms2-production.up.railway.app/api/keys')
