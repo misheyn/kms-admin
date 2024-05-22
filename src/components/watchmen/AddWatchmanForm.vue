@@ -2,19 +2,19 @@
   <form @submit.prevent>
     <div class="form__inputs">
       <div class="first__block">
-        <form-input
+        <text-input
             v-model="watchman.lastName"
             placeholder="Фамилия"/>
-        <form-input
+        <text-input
             v-model="watchman.firstName"
             placeholder="Имя"/>
-        <form-input
+        <text-input
             v-model="watchman.patronymic"
             placeholder="Отчество"/>
-        <form-input
+        <text-input
             v-model="watchman.login"
             placeholder="Логин"/>
-        <form-input
+        <text-input
             v-model="watchman.password"
             placeholder="Пароль"
             :password="true"/>
@@ -42,12 +42,12 @@
 
 <script>
 import MyButton from "@/components/UI/MyButton.vue"
-import FormInput from "@/components/UI/FormInput.vue"
+import TextInput from "@/components/UI/TextInput.vue"
 import watchmenApi from "@/api/watchmenApi"
 import employeesApi from "@/api/employeesApi"
 
 export default {
-  components: {FormInput, MyButton},
+  components: {TextInput, MyButton},
   data() {
     return {
       defaultImage: require("../../assets/default_photo.png"),

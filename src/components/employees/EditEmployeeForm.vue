@@ -2,13 +2,13 @@
   <form @submit.prevent>
     <div class="form__inputs">
       <div class="first__block">
-        <form-input
+        <text-input
             v-model="localEmployee.lastName"
             placeholder="Фамилия"/>
-        <form-input
+        <text-input
             v-model="localEmployee.firstName"
             placeholder="Имя"/>
-        <form-input
+        <text-input
             v-model="localEmployee.patronymic"
             placeholder="Отчество"/>
         <select class="employee-type" v-model="localEmployee.type">
@@ -19,7 +19,7 @@
         </select>
       </div>
       <div class="second__block" style="margin-left: 15px;">
-        <form-input
+        <text-input
             v-model="localEmployee.IDNumber"
             placeholder="№ удостоверения"/>
         <div class="id-date">
@@ -65,11 +65,11 @@
 
 <script>
 import MyButton from "@/components/UI/MyButton.vue"
-import FormInput from "@/components/UI/FormInput.vue"
+import TextInput from "@/components/UI/TextInput.vue"
 import employeesApi from "@/api/employeesApi"
 
 export default {
-  components: {FormInput, MyButton},
+  components: {TextInput, MyButton},
   props: {
     employee: {
       type: Object,

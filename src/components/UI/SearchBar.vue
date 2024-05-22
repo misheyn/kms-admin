@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import inputMixin from "@/mixins/inputMixin";
+import inputMixin from "@/mixins/inputMixin"
 
 export default {
   name: 'search-bar',
@@ -17,7 +17,6 @@ export default {
   border: 1px solid black;
   border-radius: 12px;
   padding: 5px 15px;
-  margin-top: 20px;
   font-size: large;
 }
 </style>

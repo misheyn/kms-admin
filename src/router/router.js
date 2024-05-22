@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MainPage from "@/pages/MainPage.vue"
 import LoginPage from "@/pages/LoginPage.vue"
 import ShiftsPage from "@/pages/ShiftsPage.vue"
 import WatchmenPage from "@/pages/WatchmenPage.vue"
@@ -13,11 +12,6 @@ const routes = [
     path: '/',
     name: 'auth',
     component: LoginPage
-  },
-  {
-    path: '/main',
-    name: 'main',
-    component: MainPage
   },
   {
     path: '/shifts',

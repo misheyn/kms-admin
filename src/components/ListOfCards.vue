@@ -1,5 +1,9 @@
 <template>
-  <div v-if="objects.length > 0" class="list" v-scroll="handleScroll">
+  <div
+      v-if="objects.length > 0"
+      class="list"
+      :class="{'notOperations': cardType !== 'operation'}"
+      v-scroll="handleScroll">
     <transition-group name="object-list">
       <list-item
           v-for="(item, index) in objects"
@@ -11,10 +15,10 @@
           @toggle-active="toggleActive(index)">
         <div
             v-if="cardType === 'employee' || cardType === 'watchman' || cardType === 'permissionEmployee'"
-            class="first-line">{{ item.lastName }} {{ item.firstName }}</div>
+            class="first-line">{{ item.lastName }} {{ item.firstName.slice(0, 1) }}. {{ item.patronymic.slice(0, 1) }}.</div>
         <div v-if="cardType === 'employee'">Должность: {{ convertType(item.type) }}</div>
         <div v-if="cardType === 'watchman'">Логин: {{ item.login }}</div>
-        <div v-if="cardType === 'audience'">{{ item.number }}</div>
+        <div v-if="cardType === 'audience'" class="first-line">{{ item.number }}</div>
         <div v-if="cardType === 'audience'">Тип: {{ convertType(item.type) }}</div>
         <div v-if="cardType === 'division' || cardType === 'permissionDivision'" class="first-line">
           {{ item.name }}</div>
@@ -22,10 +26,18 @@
           Должность: {{ convertType(item.type) }}, Разрешений: {{ item.permissionsNumber }}</div>
         <div v-if="cardType === 'permissionDivision'">
           Разрешений: {{ item.permissionsNumber }}</div>
+        <div v-if="cardType === 'operation'" class="operation">
+          {{item.key.main ? 'Основной' : 'Запасной'}} ключ от аудитории <b>{{item.key.number}}</b></div>
+        <div v-if="cardType === 'operation'" class="operation">
+          Выдан: <b>{{formatTime(item.giveDateTime)}}</b>
+          <br>Возвращен: <b>{{formatTime(item.returnDateTime)}}</b></div>
+        <div v-if="cardType === 'operation'" class="operation">
+          {{convertTypeForOperation(item.employee.type)}} <b>{{item.employee.lastName}}</b>
+          {{item.employee.firstName.slice(0, 1)}}. {{item.employee.patronymic.slice(0, 1)}}.</div>
       </list-item>
     </transition-group>
   </div>
-  <h2 v-else style="margin: 15px 5px">Список {{ element }} пуст</h2>
+  <h3 v-else style="margin: 15px 5px; color: darkred">Список {{ element }} пуст</h3>
 </template>
 
 <script>
@@ -74,21 +86,43 @@ export default {
       else if (type === "MULTIMEDIA") return 'Мультимедийная'
       else if (type === "LAB") return 'Лаборатория'
       else if (type === "ADMINISTRATION") return 'Служебная'
+    },
+    convertTypeForOperation(type) {
+      if (type === "TEACHER") return 'Преподаватель'
+      else if (type === "SERVICE") return 'Сотрудник персонала'
+      else if (type === "SECURITY") return 'Сотрудник охраны'
+    },
+    formatTime(date) {
+      if (date === null || date === undefined) return '...'
+      else {
+        const dateObject = new Date(date)
+        const hours = dateObject.getHours()
+        const minutes = dateObject.getMinutes()
+        const seconds = dateObject.getSeconds()
+        return `${hours}:${minutes}:${seconds}`
+      }
     }
   },
   computed: {
     ...mapState({
       activeIndex: state => state.index.activeIndex
     })
+  },
+  mounted() {
+    this.setActiveIndex(-1)
   }
 }
 </script>
 
 <style scoped>
 .list {
-  width: 49%;
+  width: 100%;
   margin-top: 10px;
-  height: 80vh;
+}
+
+.list.notOperations {
+  width: 49%;
+  max-height: 80vh;
   overflow-y: auto;
 }
 
@@ -115,5 +149,13 @@ export default {
 .first-line {
   font-weight: bold;
   font-size: large;
+}
+
+.operation {
+  font-size: small;
+}
+
+.operation b {
+  color: #E68569;
 }
 </style>

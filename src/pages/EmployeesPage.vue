@@ -1,20 +1,26 @@
 <template>
   <div class="page__wrapper">
-    <div class="btn__wrapper" style="display: flex;">
+    <div class="btn__wrapper" style="display: flex; margin-top: 10px;">
       <button class="active-tab switch-btn" @click="selectTab('employees')">Сотрудники</button>
       <button class="switch-btn" @click="selectTab('audiences')">Аудитории</button>
     </div>
     <div class="line"></div>
-    <div class="top__panel">
+    <div class="top__panel" style="align-items: center;">
       <my-button
           class="create-btn"
-          @click="this.dialogVisible = true"
-          style="margin-top: 20px;">
+          @click="this.dialogVisible = true">
         Добавить сотрудника
       </my-button>
-      <create-dialog v-model:show="dialogVisible">
+      <my-dialog v-model:show="dialogVisible">
         <add-employee-form @create="addEmployee"/>
-      </create-dialog>
+      </my-dialog>
+      <select v-model="selectedType" class="filter-type">
+        <option value="" selected disabled>Выберите тип</option>
+        <option value="">Все</option>
+        <option value="TEACHER">Преподаватель</option>
+        <option value="SERVICE">Персонал</option>
+        <option value="SECURITY">Охрана</option>
+      </select>
       <search-bar
           v-model="searchQuery"
           placeholder="Поиск..."/>
@@ -38,7 +44,7 @@
 </template>
 
 <script>
-import CreateDialog from "@/components/UI/CreateDialog.vue"
+import MyDialog from "@/components/UI/MyDialog.vue"
 import SearchBar from "@/components/UI/SearchBar.vue"
 import MyButton from "@/components/UI/MyButton.vue"
 import ListOfCards from "@/components/ListOfCards.vue"
@@ -47,14 +53,15 @@ import AddEmployeeForm from "@/components/employees/AddEmployeeForm.vue"
 import EmployeeInfoCard from "@/components/employees/EmployeeInfoCard.vue"
 
 export default {
-  components: {EmployeeInfoCard, AddEmployeeForm, ListOfCards, MyButton, SearchBar, CreateDialog},
+  components: {EmployeeInfoCard, AddEmployeeForm, ListOfCards, MyButton, SearchBar, MyDialog},
   data() {
     return {
       searchQuery: '',
       employees: [],
       isLoading: false,
       dialogVisible: false,
-      selectedEmployee: null
+      selectedEmployee: null,
+      selectedType: ''
     }
   },
   methods: {
@@ -97,10 +104,7 @@ export default {
     },
     async fetchEmployees () {
       this.isLoading = true
-      const getImagesResponse = await employeesApi.getAllImages()
-      console.log(getImagesResponse)
       const getEmployeesResponse = await employeesApi.getAllIDs()
-      console.log(getEmployeesResponse)
 
       for (const it of getEmployeesResponse) {
         if (it.employee.employee_status === "WORKS" && it.employee.employee_type !== "WATCHMAN") {
@@ -129,27 +133,23 @@ export default {
       if (index !== -1) this.employees.splice(index, 1, updatedEmployee)
       updatedEmployee.photo = await employeesApi.getImage(updatedEmployee.imageId)
       this.showInfoCard(updatedEmployee)
-    },
-    convertType(type) {
-      if (type === "TEACHER") return 'Преподаватель'
-      else if (type === "SERVICE") return 'Персонал'
-      else if (type === "SECURITY") return 'Охрана'
     }
   },
   computed: {
-    searchedEmployees () {
+    searchedEmployees() {
       const query = this.searchQuery.toLowerCase()
-      const convertedTypes = this.employees.map(employee => this.convertType(employee.type).toLowerCase())
-
-      return [...this.employees].filter((employee, index) => {
-        const convertedType = convertedTypes[index]
-        return Object.values(employee).some(value => {
-          if (typeof value === 'string') {
-            return value.toLowerCase().includes(query)
-          }
-          return false;
-        }) || convertedType.includes(query)
-      })
+      return [...this.employees]
+          .filter(employee => {
+            return (!this.selectedType || employee.type === this.selectedType) &&
+                Object.values(employee).some(value => {
+                  if (typeof value === 'string') {
+                    return value.toLowerCase().includes(query)
+                  } else if (value !== undefined && value !== null) {
+                    return value.toString().toLowerCase().includes(query)
+                  }
+                  return false
+                })
+          })
     }
   },
   mounted() {
@@ -159,16 +159,16 @@ export default {
 </script>
 
 <style scoped>
-.line {
-  height: 1px;
-  top: -1px;
-  background-color: lightgray;
-  position: relative;
-  width: 100%;
-}
-
 .top__panel, .center__panel {
   display: flex;
   justify-content: space-between;
+  padding: 15px 5px;
+}
+
+.filter-type {
+  margin-left: auto;
+  margin-right: 10px;
+  height: 25px;
+  border: none;
 }
 </style>

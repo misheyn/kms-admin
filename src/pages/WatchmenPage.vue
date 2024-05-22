@@ -1,14 +1,14 @@
 <template>
   <div class="page__wrapper">
-    <div class="top__panel">
+    <div class="top__panel" style="align-items: center">
       <my-button
           class="create-btn"
           @click="this.dialogVisible = true">
         Добавить вахтера
       </my-button>
-      <create-dialog v-model:show="dialogVisible">
+      <my-dialog v-model:show="dialogVisible">
         <add-watchman-form @create="addWatchman"/>
-      </create-dialog>
+      </my-dialog>
       <search-bar
           v-model="searchQuery"
           placeholder="Поиск..."/>
@@ -34,7 +34,7 @@
 <script>
 import MyButton from "@/components/UI/MyButton.vue"
 import SearchBar from "@/components/UI/SearchBar.vue"
-import CreateDialog from "@/components/UI/CreateDialog.vue"
+import MyDialog from "@/components/UI/MyDialog.vue"
 import AddWatchmanForm from "@/components/watchmen/AddWatchmanForm.vue"
 import WatchmanInfoCard from "@/components/watchmen/WatchmanInfoCard.vue"
 import watchmenApi from "@/api/watchmenApi"
@@ -42,7 +42,7 @@ import ListOfCards from "@/components/ListOfCards.vue"
 import employeesApi from "@/api/employeesApi"
 
 export default {
-  components: {ListOfCards, WatchmanInfoCard, AddWatchmanForm, CreateDialog, SearchBar, MyButton},
+  components: {ListOfCards, WatchmanInfoCard, AddWatchmanForm, MyDialog, SearchBar, MyButton},
   data() {
     return {
       searchQuery: '',
@@ -75,10 +75,8 @@ export default {
     },
     async fetchWatchmen() {
       this.isLoading = true
-      const getImagesResponse = await employeesApi.getAllImages()
-      console.log(getImagesResponse)
       const getUsersResponse = await watchmenApi.getAllUsers()
-      console.log(getUsersResponse)
+
       for (const user of getUsersResponse) {
         if (user.employee && user.employee.employee_type === "WATCHMAN" && user.employee.employee_status === "WORKS") {
           const getImageResponse = await employeesApi.getImage(user.employee.image.image_id)
@@ -126,10 +124,6 @@ export default {
 .top__panel, .center__panel {
   display: flex;
   justify-content: space-between;
-}
-
-.create-btn {
-  cursor: pointer;
-  margin-top: 20px;
+  padding: 15px 5px;
 }
 </style>

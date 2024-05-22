@@ -1,11 +1,11 @@
 import MyButton from '@/components/UI/MyButton.vue'
 import SearchBar from "@/components/UI/SearchBar.vue"
-import FormInput from "@/components/UI/FormInput.vue"
-import CreateDialog from "@/components/UI/CreateDialog.vue"
+import TextInput from "@/components/UI/TextInput.vue"
+import MyDialog from "@/components/UI/MyDialog.vue"
 
 export default [
     MyButton,
     SearchBar,
-    FormInput,
-    CreateDialog
+    TextInput,
+    MyDialog
 ]

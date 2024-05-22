@@ -1,10 +1,10 @@
 <template>
   <form @submit.prevent>
     <div class="form__inputs">
-      <form-input
+      <text-input
           v-model="localAudience.number"
           placeholder="Номер аудитории"/>
-      <form-input
+      <text-input
           v-model="localAudience.capacity"
           placeholder="Вместимость"/>
       <div style="padding: 3px 5px 0">
@@ -62,11 +62,11 @@
 </template>
 
 <script>
-import FormInput from "@/components/UI/FormInput.vue"
+import TextInput from "@/components/UI/TextInput.vue"
 import MyButton from "@/components/UI/MyButton.vue"
 
 export default {
-  components: {MyButton, FormInput},
+  components: {MyButton, TextInput},
   props: {
     audience: {
       type: Object,

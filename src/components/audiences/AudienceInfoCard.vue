@@ -46,23 +46,23 @@
       <my-button class="btn-remove" @click="removeDialogVisible = true">Удалить</my-button>
       <my-button class="btn-edit" @click="editDialogVisible = true">Редактировать</my-button>
     </div>
-    <create-dialog v-model:show="editDialogVisible">
+    <my-dialog v-model:show="editDialogVisible">
       <edit-audience-form
           :audience="audience"
           @edit="editAudience"
           @close="editDialogVisible = false"/>
-    </create-dialog>
-    <create-dialog v-model:show="removeDialogVisible">
+    </my-dialog>
+    <my-dialog v-model:show="removeDialogVisible">
       <confirm-delete-form
           :element="'эту аудиторию'"
           @delete="removeAudience"
           @close="removeDialogVisible = false"/>
-    </create-dialog>
+    </my-dialog>
   </div>
 </template>
 
 <script>
-import CreateDialog from "@/components/UI/CreateDialog.vue"
+import MyDialog from "@/components/UI/MyDialog.vue"
 import VueQrcode from "@chenfengyuan/vue-qrcode"
 import MyButton from "@/components/UI/MyButton.vue"
 import {mapMutations, mapState} from "vuex"
@@ -71,7 +71,7 @@ import audiencesApi from "@/api/audiencesApi"
 import ConfirmDeleteForm from "@/components/ConfirmDeleteForm.vue"
 
 export default {
-  components: {ConfirmDeleteForm, EditAudienceForm, MyButton, VueQrcode, CreateDialog},
+  components: {ConfirmDeleteForm, EditAudienceForm, MyButton, VueQrcode, MyDialog},
   data() {
     return {
       editDialogVisible: false,
@@ -175,7 +175,7 @@ export default {
 <style scoped>
 .info-card {
   width: 49%;
-  margin-top: 70px;
+  margin-top: 10px;
   border: 1px solid lightgray;
   border-radius: 8px;
   padding: 15px 15px 10px;

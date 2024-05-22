@@ -17,7 +17,7 @@
 import inputMixin from "@/mixins/inputMixin";
 
 export default {
-  name: 'form-input',
+  name: 'text-input',
   mixins: [inputMixin],
   props: {
     password: {

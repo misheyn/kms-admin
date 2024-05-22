@@ -13,7 +13,8 @@
     </div>
     <search-bar
       v-model="searchQuery"
-      placeholder="Поиск..."/>
+      placeholder="Поиск..."
+      style="font-size: medium; margin-top: 10px;"/>
     <div class="info__wrapper">
       <div v-if="employees.length > 0 && !editListMode && !isLoading" class="employee-list" v-scroll="handleScroll">
         <edit-list-item
@@ -104,7 +105,6 @@ export default {
     async updateDivisionName() {
       const updatedDivision = {...this.division}
       const updateResponse = await divisionsApi.updateDivision(this.division.id, this.newDivisionName)
-      console.log(updateResponse)
       if (updateResponse.status === 200) {
         updatedDivision.name = updateResponse.data.name
         this.$emit('update-division-name', updatedDivision)
@@ -115,7 +115,6 @@ export default {
       this.isLoading = true
       this.allEmployees = []
       const getEmployeesResponse = await employeesApi.getAllEmployees()
-      console.log(getEmployeesResponse)
 
       for (const it of getEmployeesResponse) {
         if (it.employee_status === "WORKS" && it.employee_type !== "WATCHMAN") {
@@ -161,7 +160,6 @@ export default {
       if (this.removeEmployees.length > 0) {
         for (const it of this.removeEmployees) {
           const deleteEmployeeResponse = await employeesApi.deleteEmployeeFromDivision(this.division.id, it.id)
-          console.log(deleteEmployeeResponse)
           if (deleteEmployeeResponse.status !== 200 || deleteEmployeeResponse.status !== 204)
             alert(`Сотрудник ${it.lastName} ${it.firstName} ${it.patronymic} не удален из подразделения ${this.division.name}. Попробуйте снова`)
           this.$emit('update-employees', it, 'remove')
@@ -198,13 +196,13 @@ export default {
 <style scoped>
 .info-card {
   width: 49%;
-  margin-top: 20px;
+  margin-top: 10px;
   border: 1px solid lightgray;
   border-radius: 8px;
   padding: 15px 15px 10px;
   display: flex;
   flex-direction: column;
-  height: 75vh;
+  height: 80vh;
 }
 
 .close-cross {
@@ -220,6 +218,7 @@ export default {
   flex-direction: row;
   align-self: flex-end;
   justify-content: center;
+  margin-top: 40px;
 }
 
 .btn-cancel {

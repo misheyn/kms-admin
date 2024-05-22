@@ -2,13 +2,13 @@
   <form @submit.prevent>
     <div class="form__inputs">
       <div class="first__block">
-        <form-input
+        <text-input
             v-model="employee.lastName"
             placeholder="Фамилия"/>
-        <form-input
+        <text-input
             v-model="employee.firstName"
             placeholder="Имя"/>
-        <form-input
+        <text-input
             v-model="employee.patronymic"
             placeholder="Отчество"/>
         <select class="employee-type" v-model="employee.type">
@@ -19,7 +19,7 @@
         </select>
       </div>
       <div class="second__block" style="margin-left: 15px;">
-        <form-input
+        <text-input
             v-model="employee.IDNumber"
             placeholder="№ удостоверения"/>
         <div class="id-date">
@@ -56,12 +56,12 @@
 </template>
 
 <script>
-import FormInput from "@/components/UI/FormInput.vue"
+import TextInput from "@/components/UI/TextInput.vue"
 import MyButton from "@/components/UI/MyButton.vue"
 import employeesApi from "@/api/employeesApi"
 
 export default {
-  components: {MyButton, FormInput},
+  components: {MyButton, TextInput},
   data() {
     return {
       defaultImage: require("../../assets/default_photo.png"),

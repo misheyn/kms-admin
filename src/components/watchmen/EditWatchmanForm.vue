@@ -2,23 +2,23 @@
   <form @submit.prevent>
     <div class="form__inputs">
       <div class="first__block">
-        <form-input
+        <text-input
             v-model="localWatchman.lastName"
             placeholder="Фамилия"/>
-        <form-input
+        <text-input
             v-model="localWatchman.firstName"
             placeholder="Имя"/>
-        <form-input
+        <text-input
             v-model="localWatchman.patronymic"
             placeholder="Отчество"/>
-        <form-input
+        <text-input
             v-model="localWatchman.login"
             placeholder="Логин"/>
-        <form-input
+        <text-input
             v-model="newPassword"
             :password="true"
             placeholder="Введите новый пароль"/>
-        <form-input
+        <text-input
             v-model="newPassword2"
             :password="true"
             placeholder="Подтвердите новый пароль"/>
@@ -53,12 +53,12 @@
 </template>
 
 <script>
-import FormInput from "@/components/UI/FormInput.vue"
+import TextInput from "@/components/UI/TextInput.vue"
 import MyButton from "@/components/UI/MyButton.vue"
 import employeesApi from "@/api/employeesApi"
 
 export default {
-  components: {MyButton, FormInput},
+  components: {MyButton, TextInput},
   props: {
     watchman: {
       type: Object,

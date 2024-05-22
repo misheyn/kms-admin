@@ -13,23 +13,23 @@
       <my-button class="btn-edit" @click="editDialogVisible = true">Редактировать</my-button>
     </div>
   </div>
-  <create-dialog v-model:show="editDialogVisible">
+  <my-dialog v-model:show="editDialogVisible">
     <edit-watchman-form
         :watchman="watchman"
         @edit="editWatchman"
         @close="editDialogVisible = false"/>
-  </create-dialog>
-  <create-dialog v-model:show="removeDialogVisible">
+  </my-dialog>
+  <my-dialog v-model:show="removeDialogVisible">
     <confirm-delete-form
         :element="'этого вахтера'"
         @delete="removeWatchman"
         @close="removeDialogVisible = false"/>
-  </create-dialog>
+  </my-dialog>
 </template>
 
 <script>
 import MyButton from "@/components/UI/MyButton.vue"
-import CreateDialog from "@/components/UI/CreateDialog.vue"
+import MyDialog from "@/components/UI/MyDialog.vue"
 import EditWatchmanForm from "@/components/watchmen/EditWatchmanForm.vue"
 import watchmenApi from "@/api/watchmenApi"
 import {mapMutations, mapState} from "vuex"
@@ -37,7 +37,7 @@ import ConfirmDeleteForm from "@/components/ConfirmDeleteForm.vue"
 import employeesApi from "@/api/employeesApi"
 
 export default {
-  components: {ConfirmDeleteForm, EditWatchmanForm, CreateDialog, MyButton},
+  components: {ConfirmDeleteForm, EditWatchmanForm, MyDialog, MyButton},
   data() {
     return {
       editDialogVisible: false,
@@ -68,7 +68,6 @@ export default {
           this.watchman.patronymic,
           this.watchman.imageId,
           "WATCHMAN")
-      console.log(deleteResponse)
       if (deleteResponse.status === 200) {
         this.$emit('remove', this.watchman)
         this.closeInfoCard()
@@ -111,7 +110,7 @@ export default {
 <style scoped>
 .info-card {
   width: 49%;
-  margin-top: 100px;
+  margin-top: 10px;
   border: 1px solid lightgray;
   border-radius: 8px;
   padding: 15px 15px 10px;

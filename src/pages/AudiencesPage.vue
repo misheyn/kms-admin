@@ -1,22 +1,30 @@
 <template>
   <div class="page__wrapper">
-    <div class="btn__wrapper" style="display: flex;">
+    <div class="btn__wrapper" style="display: flex; margin-top: 10px;">
       <button class="switch-btn" @click="selectTab('employees')">Сотрудники</button>
       <button class="switch-btn active-tab" @click="selectTab('audiences')">Аудитории</button>
     </div>
     <div class="line"></div>
-    <div class="top__panel">
+    <div class="top__panel" style="align-items: center;">
       <my-button
           class="create-btn"
           @click="this.dialogVisible = true">
         Добавить аудиторию
       </my-button>
-      <create-dialog v-model:show="dialogVisible">
+      <my-dialog v-model:show="dialogVisible">
         <add-audience-form @create="addAudience"/>
-      </create-dialog>
-      <search-bar
-          v-model="searchQuery"
-          placeholder="Поиск..."/>
+      </my-dialog>
+        <select v-model="selectedType" class="filter-type">
+          <option value="" selected disabled>Выберите тип</option>
+          <option value="">Все</option>
+          <option value="STUDY">Учебная</option>
+          <option value="LAB">Лаборатория</option>
+          <option value="MULTIMEDIA">Мультимедийная</option>
+          <option value="ADMINISTRATION">Служебная</option>
+        </select>
+        <search-bar
+            v-model="searchQuery"
+            placeholder="Поиск..."/>
     </div>
     <div class="center__panel">
       <list-of-cards
@@ -37,7 +45,7 @@
 </template>
 
 <script>
-import CreateDialog from "@/components/UI/CreateDialog.vue"
+import MyDialog from "@/components/UI/MyDialog.vue"
 import ListOfCards from "@/components/ListOfCards.vue"
 import SearchBar from "@/components/UI/SearchBar.vue"
 import MyButton from "@/components/UI/MyButton.vue"
@@ -46,14 +54,15 @@ import AddAudienceForm from "@/components/audiences/AddAudienceForm.vue"
 import AudienceInfoCard from "@/components/audiences/AudienceInfoCard.vue"
 
 export default {
-  components: {AudienceInfoCard, AddAudienceForm, MyButton, SearchBar, ListOfCards, CreateDialog},
+  components: {AudienceInfoCard, AddAudienceForm, MyButton, SearchBar, ListOfCards, MyDialog},
   data() {
     return {
       searchQuery: '',
       audiences: [],
       isLoading: false,
       dialogVisible: false,
-      selectedAudience: null
+      selectedAudience: null,
+      selectedType: ''
     }
   },
   methods: {
@@ -107,16 +116,18 @@ export default {
   computed: {
     searchedAudience() {
       const query = this.searchQuery.toLowerCase()
-      return [...this.audiences].filter(audience => {
-        return Object.values(audience).some(value => {
-          if (typeof value === 'string') {
-            return value.toLowerCase().includes(query)
-          } else if (value !== undefined && value !== null) {
-            return value.toString().toLowerCase().includes(query)
-          }
-          return false
-        })
-      })
+      return [...this.audiences]
+          .filter(audience => {
+            return (!this.selectedType || audience.type === this.selectedType) &&
+                Object.values(audience).some(value => {
+                  if (typeof value === 'string') {
+                    return value.toLowerCase().includes(query)
+                  } else if (value !== undefined && value !== null) {
+                    return value.toString().toLowerCase().includes(query)
+                  }
+                  return false
+                })
+          })
     }
   },
   mounted() {
@@ -126,21 +137,16 @@ export default {
 </script>
 
 <style scoped>
-.line {
-  height: 1px;
-  top: -1px;
-  background-color: lightgray;
-  position: relative;
-  width: 100%;
-}
-
 .top__panel, .center__panel {
   display: flex;
   justify-content: space-between;
+  padding: 15px 5px;
 }
 
-.create-btn {
-  cursor: pointer;
-  margin-top: 20px;
+.filter-type {
+  margin-left: auto;
+  margin-right: 10px;
+  height: 25px;
+  border: none;
 }
 </style>

@@ -1,16 +1,14 @@
 <template>
   <div class="navbar">
-    <div
-        class="logo"
-        @click="selectTab('main')">Keys Management System</div>
+    <div class="logo">Keys Management System</div>
     <div class="navbar__btn" v-if="!isAuthPage" style="margin-left: auto;">
       <button
           class="switch-btn"
           :class="{ 'active-tab': selectedTab === 'shifts' }"
-          @click="selectTab('shifts')">Журналы смен</button>
+          @click="selectTab('shifts')">Журнал смен</button>
       <button
           class="switch-btn"
-          :class="{ 'active-tab': selectedTab === 'employees' }"
+          :class="{ 'active-tab': selectedTab === 'employees' || selectedTab === 'audiences' }"
           @click="selectTab('employees')">Сотрудники и аудитории</button>
       <button
           class="switch-btn"
@@ -41,23 +39,28 @@ export default {
   },
   methods: {
     selectTab(tab) {
-      this.selectedTab = tab;
-      if (tab === 'shifts') this.$router.push('/shifts')
-      else if (tab === 'employees') this.$router.push('/employees')
-      else if (tab === 'watchmen') this.$router.push('/watchmen')
-      else if (tab === 'permissions') this.$router.push('/permissions')
-      else if (tab === 'divisions') this.$router.push('/divisions')
-      else if (tab === 'main') this.$router.push('/main')
+      this.selectedTab = tab
+      this.$router.push(`/${tab}`)
+    },
+    updateSelectedTab() {
+      this.selectedTab = this.$route.name
     }
   },
   computed: {
     isAuthPage () {
       return this.$route.name === 'auth'
-    },
+    }
+  },
+  watch: {
+    $route: 'updateSelectedTab'
   },
   mounted() {
-    this.selectedTab = this.$route.name
+    this.updateSelectedTab()
   },
+  beforeRouteUpdate(to, from, next) {
+    this.updateSelectedTab()
+    next()
+  }
 }
 </script>
 
@@ -78,8 +81,8 @@ export default {
 
 .logo {
   font-family: "Comic Sans MS", sans-serif;
-  font-size: 18px;
-  color: darkmagenta;
+  font-size: 22px;
+  color: #E68569;
 }
 
 .navbar__btn, .switch-btn {

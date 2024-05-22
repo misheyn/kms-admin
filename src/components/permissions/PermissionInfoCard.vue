@@ -9,7 +9,8 @@
     </div>
     <search-bar
         v-model="searchQuery"
-        placeholder="Поиск..."/>
+        placeholder="Поиск..."
+        style="font-size: medium; margin-top: 10px;"/>
     <div class="info__wrapper">
       <div v-if="audiences.length > 0 && !editListMode" class="permission-list" v-scroll="handleScroll">
         <edit-list-item
@@ -108,7 +109,6 @@ export default {
     async openEditMode() {
       this.allAudiences = []
       const getAudiencesResponse = await audiencesApi.getAllAudiences()
-      console.log(getAudiencesResponse)
 
       for (const it of getAudiencesResponse) {
         if (it.exist) {
@@ -246,13 +246,13 @@ export default {
 <style scoped>
 .info-card {
   width: 49%;
-  margin-top: 20px;
+  margin-top: 10px;
   border: 1px solid lightgray;
   border-radius: 8px;
   padding: 15px 15px 10px;
   display: flex;
   flex-direction: column;
-  height: 75vh;
+  height: 80vh;
 }
 
 .close-cross {
@@ -268,6 +268,7 @@ export default {
   flex-direction: row;
   align-self: flex-end;
   justify-content: center;
+  margin-top: 40px;
 }
 
 .btn-cancel {

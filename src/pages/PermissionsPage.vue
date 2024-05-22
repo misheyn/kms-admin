@@ -1,6 +1,6 @@
 <template>
   <div class="page__wrapper">
-    <div class="btn__wrapper" style="display: flex;">
+    <div class="btn__wrapper" style="display: flex; margin-top: 10px;">
       <button
           class="switch-btn"
           :class="{'active-tab': cardType === 'permissionEmployee'}"
@@ -81,7 +81,6 @@ export default {
     },
     async fetchDivisions () {
       const getDivisionsResponse = await divisionsApi.getAllDivisions()
-      console.log(getDivisionsResponse)
       getDivisionsResponse.forEach(it => {
         const division = {
           id: it.division_id,
@@ -93,10 +92,7 @@ export default {
       })
     },
     async fetchEmployees () {
-      const getImagesResponse = await employeesApi.getAllImages()
-      console.log(getImagesResponse)
       const getEmployeesResponse = await employeesApi.getAllEmployees()
-      console.log(getEmployeesResponse)
 
       for (const it of getEmployeesResponse) {
         if (it.employee_status === "WORKS" && it.employee_type !== "WATCHMAN") {
@@ -119,7 +115,6 @@ export default {
     async getPermissions() {
       this.audiences = []
       const getAudiencesResponse = await audiencesApi.getAllAudiences()
-      console.log(getAudiencesResponse)
 
       for (const it of getAudiencesResponse) {
         if (it.exist && it.permissions) {
@@ -178,18 +173,13 @@ export default {
 .center__panel {
   display: flex;
   justify-content: space-between;
+  padding: 15px 5px;
 }
 
 .top__panel {
   display: flex;
   justify-content: flex-end;
-}
-
-.line {
-  height: 1px;
-  top: -1px;
-  background-color: lightgray;
-  position: relative;
-  width: 100%;
+  align-items: center;
+  padding: 15px 5px;
 }
 </style>

@@ -1,10 +1,10 @@
 <template>
   <form @submit.prevent>
     <div class="form__inputs">
-        <form-input
+        <text-input
             v-model="audience.number"
             placeholder="Номер аудитории"/>
-        <form-input
+        <text-input
             v-model="audience.capacity"
             placeholder="Вместимость"/>
         <select class="audience-type" v-model="audience.type">
@@ -24,12 +24,12 @@
 </template>
 
 <script>
-import FormInput from "@/components/UI/FormInput.vue"
+import TextInput from "@/components/UI/TextInput.vue"
 import MyButton from "@/components/UI/MyButton.vue"
 import audiencesApi from "@/api/audiencesApi"
 
 export default {
-  components: {MyButton, FormInput},
+  components: {MyButton, TextInput},
   data() {
     return {
       audience: {

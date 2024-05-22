@@ -42,7 +42,7 @@ export default {
 
 <style scoped>
 .item {
-  margin-top: 10px;
+  margin-bottom: 10px;
   padding: 5px 15px;
   display: flex;
   justify-content: flex-start;
@@ -53,7 +53,7 @@ export default {
 }
 
 .item.active {
-  border: 2px solid aquamarine;
+  border: 2px solid #1BE0A6;
 }
 
 .info {

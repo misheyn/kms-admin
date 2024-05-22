@@ -1,15 +1,14 @@
 <template>
   <div class="page__wrapper">
-    <div class="top__panel">
+    <div class="top__panel" style="align-items: center">
       <my-button
           class="create-btn"
-          @click="this.dialogVisible = true"
-          style="margin-top: 20px;">
+          @click="this.dialogVisible = true">
         Создать подразделение
       </my-button>
-      <create-dialog v-model:show="dialogVisible">
+      <my-dialog v-model:show="dialogVisible">
         <add-division-form @create="addDivision"/>
-      </create-dialog>
+      </my-dialog>
       <search-bar
           v-model="searchQuery"
           placeholder="Поиск..."
@@ -36,7 +35,7 @@
 </template>
 
 <script>
-import CreateDialog from "@/components/UI/CreateDialog.vue"
+import MyDialog from "@/components/UI/MyDialog.vue"
 import ListOfCards from "@/components/ListOfCards.vue"
 import SearchBar from "@/components/UI/SearchBar.vue"
 import MyButton from "@/components/UI/MyButton.vue"
@@ -46,7 +45,7 @@ import DivisionInfoCard from "@/components/divisions/DivisionInfoCard.vue"
 import employeesApi from "@/api/employeesApi"
 
 export default {
-  components: {AddDivisionForm, MyButton, SearchBar, ListOfCards, CreateDialog, DivisionInfoCard},
+  components: {AddDivisionForm, MyButton, SearchBar, ListOfCards, MyDialog, DivisionInfoCard},
   data() {
     return {
       searchQuery: '',
@@ -72,7 +71,6 @@ export default {
     async getEmployees() {
       this.employees = []
       const getEmployeesResponse = await employeesApi.getAllEmployees()
-      console.log(getEmployeesResponse)
 
       for (const it of getEmployeesResponse) {
         if (it.employee_status === "WORKS" && it.employee_type !== "WATCHMAN" && it.divisions) {
@@ -95,7 +93,6 @@ export default {
     async fetchDivisions () {
       this.isLoading = true
       const getDivisionsResponse = await divisionsApi.getAllDivisions()
-      console.log(getDivisionsResponse)
       getDivisionsResponse.forEach(it => {
           const division = {
             id: it.division_id,
@@ -130,5 +127,6 @@ export default {
 .top__panel, .center__panel {
   display: flex;
   justify-content: space-between;
+  padding: 15px 5px;
 }
 </style>

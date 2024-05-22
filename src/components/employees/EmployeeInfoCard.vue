@@ -29,32 +29,32 @@
       <my-button class="btn-remove" @click="removeDialogVisible = true">Удалить</my-button>
       <my-button class="btn-edit" @click="editDialogVisible = true">Редактировать</my-button>
     </div>
-    <create-dialog v-model:show="editDialogVisible">
+    <my-dialog v-model:show="editDialogVisible">
       <edit-employee-form
           :employee="employee"
           @edit="editEmployee"
           @close="editDialogVisible = false"/>
-    </create-dialog>
-    <create-dialog v-model:show="removeDialogVisible">
+    </my-dialog>
+    <my-dialog v-model:show="removeDialogVisible">
       <confirm-delete-form
           :element="'этого сотрудника'"
           @delete="removeEmployee"
           @close="removeDialogVisible = false"/>
-    </create-dialog>
+    </my-dialog>
   </div>
 </template>
 
 <script>
 import MyButton from "@/components/UI/MyButton.vue"
 import ConfirmDeleteForm from "@/components/ConfirmDeleteForm.vue"
-import CreateDialog from "@/components/UI/CreateDialog.vue"
+import MyDialog from "@/components/UI/MyDialog.vue"
 import {mapMutations, mapState} from "vuex"
 import employeesApi from "@/api/employeesApi"
 import EditEmployeeForm from "@/components/employees/EditEmployeeForm.vue"
 import VueQrcode from '@chenfengyuan/vue-qrcode'
 
 export default {
-  components: {EditEmployeeForm, CreateDialog, ConfirmDeleteForm, MyButton, VueQrcode},
+  components: {EditEmployeeForm, MyDialog, ConfirmDeleteForm, MyButton, VueQrcode},
   data() {
     return {
       editDialogVisible: false,
@@ -77,27 +77,25 @@ export default {
       this.setActiveIndex(null)
     },
     downloadQrcode() {
-      const qrcodeComponent = this.$refs.qrcode;
+      const qrcodeComponent = this.$refs.qrcode
       if (qrcodeComponent) {
-        const canvas = document.createElement('canvas');
-        canvas.width = qrcodeComponent.$el.width;
-        canvas.height = qrcodeComponent.$el.height;
+        const canvas = document.createElement('canvas')
+        canvas.width = qrcodeComponent.$el.width
+        canvas.height = qrcodeComponent.$el.height
 
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(qrcodeComponent.$el, 0, 0);
+        const ctx = canvas.getContext('2d')
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(qrcodeComponent.$el, 0, 0)
 
-        const imageDataURL = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.href = imageDataURL;
-        link.download = `${this.employee.lastName}Qrcode.png`;
+        const imageDataURL = canvas.toDataURL('image/png')
+        const link = document.createElement('a')
+        link.href = imageDataURL
+        link.download = `${this.employee.lastName}Qrcode.png`
 
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } else {
-        console.error('QR code component not found');
-      }
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } else console.error('QR code component not found')
     },
     async removeEmployee() {
       const deleteResponse = await employeesApi.updateEmployee(
@@ -161,7 +159,7 @@ export default {
 <style scoped>
 .info-card {
   width: 49%;
-  margin-top: 100px;
+  margin-top: 10px;
   border: 1px solid lightgray;
   border-radius: 8px;
   padding: 15px 15px 10px;

@@ -7,7 +7,7 @@
 
 .switch-btn.active-tab {
     font-weight: bold;
-    border-bottom: 3px solid cyan;
+    border-bottom: 4px solid #498F7A;
 }
 
 .switch-btn {
@@ -16,4 +16,13 @@
     font-size: 16px;
     padding: 5px 15px;
     cursor: pointer;
+}
+
+.line {
+    height: 1px;
+    top: -2px;
+    background-color: lightgray;
+    position: relative;
+    width: 100%;
+    z-index: -1;
 }
