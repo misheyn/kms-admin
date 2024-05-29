@@ -57,9 +57,9 @@ export default {
       const getImageResponse = await employeesApi.getImage(user.employee.image.image_id)
       const watchman = {
         id: user.user_id,
-        lastName: user.employee.second_name,
-        firstName: user.employee.first_name,
-        patronymic: user.employee.middle_name,
+        lastName: user.employee.secondName,
+        firstName: user.employee.firstName,
+        patronymic: user.employee.middleName,
         imageId: user.employee.image.image_id,
         photo: getImageResponse,
         login: user.username
@@ -78,13 +78,13 @@ export default {
       const getUsersResponse = await watchmenApi.getAllUsers()
 
       for (const user of getUsersResponse) {
-        if (user.employee && user.employee.employee_type === "WATCHMAN" && user.employee.employee_status === "WORKS") {
+        if (user.employee && user.employee.employeeType === "WATCHMAN" && user.employee.employeeStatus === "WORKS") {
           const getImageResponse = await employeesApi.getImage(user.employee.image.image_id)
           const watchman = {
             id: user.user_id,
-            lastName: user.employee.second_name,
-            firstName: user.employee.first_name,
-            patronymic: user.employee.middle_name,
+            lastName: user.employee.secondName,
+            firstName: user.employee.firstName,
+            patronymic: user.employee.middleName,
             imageId: user.employee.image.image_id,
             photo: getImageResponse,
             login: user.username

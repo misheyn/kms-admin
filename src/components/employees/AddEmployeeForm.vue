@@ -79,7 +79,7 @@ export default {
   },
   methods: {
     async addEmployee() {
-      let image_id = 103
+      let image_id = 1
       if (this.employee.photo != null) {
         const imageFormData = new FormData()
         imageFormData.append('image', this.employee.photo)
@@ -95,21 +95,24 @@ export default {
           this.employee.type
       )
       const createIDResponse = await employeesApi.createID(
-          createEmployeeResponse.employee_id,
+          createEmployeeResponse.employeeId,
           this.employee.IDNumber,
           this.employee.IDStartDate,
           this.employee.IDEndDate
       )
-      this.$emit('create', createIDResponse)
-      this.employee = {
-        lastName: '',
-        firstName: '',
-        patronymic: '',
-        photo: null,
-        type: "",
-        IDNumber: '',
-        IDStartDate: '',
-        IDEndDate: ''
+      const QRResponse = await employeesApi.generateQR(createEmployeeResponse.employeeId)
+      if (QRResponse.status === 200) {
+        this.$emit('create', createIDResponse)
+        this.employee = {
+          lastName: '',
+          firstName: '',
+          patronymic: '',
+          photo: null,
+          type: "",
+          IDNumber: '',
+          IDStartDate: '',
+          IDEndDate: ''
+        }
       }
     },
     handleFileChange(event) {

@@ -16,7 +16,7 @@
         <input v-model="localAudience.signalisation" type="radio" id="sign-no" name="signalisation" value="NONE">
         <label for="sign-no"> Нет </label>
       </div>
-      <div style="font-size: small; margin: 8px 0 2px 5px" >Тип аудитории:</div>
+      <div style="font-size: small; margin: 8px 0 2px 5px">Тип аудитории:</div>
       <select class="audience-type" v-model="localAudience.type">
         <option value="" disabled>Выберите тип</option>
         <option value="STUDY">Учебная</option>
@@ -44,7 +44,7 @@
             <option value="LOST">Утерян</option>
           </select>
         </div>
-        </div>
+      </div>
       <div class="btn__wrapper">
         <my-button
             class="cancel-btn"

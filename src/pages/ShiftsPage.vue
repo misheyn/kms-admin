@@ -1,7 +1,7 @@
 <template>
   <div class="page__wrapper">
     <div class="top__panel" style="align-items: center;">
-        <date-picker
+      <date-picker
           v-model="selectedDateRange"
           range
           placeholder="Выберите дату(ы) смены"/>
@@ -103,9 +103,9 @@ export default {
             endDateTime: itShift.end_date_time,
             watchman: {
               login: itShift.watchman.username,
-              firstName: itShift.watchman.employee.first_name,
-              lastName: itShift.watchman.employee.second_name,
-              patronymic: itShift.watchman.employee.middle_name,
+              firstName: itShift.watchman.employee.firstName,
+              lastName: itShift.watchman.employee.secondName,
+              patronymic: itShift.watchman.employee.middleName,
               photo: getImageResponse,
             },
             operations: [],
@@ -125,11 +125,11 @@ export default {
                 main: itOperation.key.main,
               },
               employee: {
-                firstName: itOperation.employee.first_name,
-                lastName: itOperation.employee.second_name,
-                patronymic: itOperation.employee.middle_name,
+                firstName: itOperation.employee.firstName,
+                lastName: itOperation.employee.secondName,
+                patronymic: itOperation.employee.middleName,
                 photo: getImageResponse,
-                type: itOperation.employee.employee_type,
+                type: itOperation.employee.employeeType,
                 permissions: itOperation.employee.permissions,
               },
               giveDateTime: itOperation.give_date_time,
@@ -140,7 +140,6 @@ export default {
             shift.operations.push(operation)
           }
           this.shifts.push(shift)
-          // if (this.shifts.length >= 10) break
         }
         this.isLoading = false
       } catch (error) {
@@ -225,7 +224,7 @@ export default {
 
 .shift-date-time {
   font-weight: bold;
-  font-size: x-large;
+  font-size: large;
 }
 
 .watchman-info {

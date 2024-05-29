@@ -33,10 +33,10 @@
       </div>
     </div>
     <my-button
-      class="btn"
-      @click="addWatchman">
-    Добавить
-  </my-button>
+        class="btn"
+        @click="addWatchman">
+      Добавить
+    </my-button>
   </form>
 </template>
 
@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     async addWatchman() {
-      let image_id = 103
+      let image_id = 1
       if (this.watchman.photo != null) {
         const imageFormData = new FormData()
         imageFormData.append('image', this.watchman.photo)
@@ -77,7 +77,7 @@ export default {
           image_id,
           "WATCHMAN")
       const createUserResponse = await watchmenApi.createUser(
-          createWatchmanResponse.employee_id,
+          createWatchmanResponse.employeeId,
           this.watchman.login,
           this.watchman.password)
       this.$emit('create', createUserResponse)

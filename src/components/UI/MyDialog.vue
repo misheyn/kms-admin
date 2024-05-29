@@ -26,6 +26,7 @@ export default {
   display: flex;
   z-index: 999;
 }
+
 .dialog__content {
   margin: auto;
   background: white;

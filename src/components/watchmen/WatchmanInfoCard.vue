@@ -62,12 +62,13 @@ export default {
     async removeWatchman() {
       const userResponse = await watchmenApi.getUser(this.watchman.id)
       const deleteResponse = await employeesApi.updateEmployee(
-          userResponse.employee.employee_id,
+          userResponse.employee.employeeId,
           this.watchman.firstName,
           this.watchman.lastName,
           this.watchman.patronymic,
           this.watchman.imageId,
-          "WATCHMAN")
+          "WATCHMAN"
+      )
       if (deleteResponse.status === 200) {
         this.$emit('remove', this.watchman)
         this.closeInfoCard()
@@ -76,13 +77,19 @@ export default {
     async editWatchman(updatedWatchman, newPassword, deleteImageId) {
       const userResponse = await watchmenApi.getUser(updatedWatchman.id)
       const updateWatchmanResponse = await employeesApi.updateEmployee(
-          userResponse.employee.employee_id,
+          userResponse.employee.employeeId,
           updatedWatchman.firstName,
           updatedWatchman.lastName,
           updatedWatchman.patronymic,
           updatedWatchman.photo.image_id,
-          "WATCHMAN")
-      const updateUserResponse = await watchmenApi.updateUser(updatedWatchman.id, updatedWatchman.login, newPassword)
+          "WATCHMAN"
+      )
+      const updateUserResponse = await watchmenApi.updateUser(
+          updatedWatchman.id,
+          updateWatchmanResponse.data.employeeId,
+          updatedWatchman.login,
+          newPassword
+      )
       let isSuccess = true
       if (deleteImageId > 0) {
         const deleteImageResponse = await employeesApi.deleteImage(deleteImageId)

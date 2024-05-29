@@ -12,9 +12,9 @@
       </button>
     </div>
     <search-bar
-      v-model="searchQuery"
-      placeholder="Поиск..."
-      style="font-size: medium; margin-top: 10px;"/>
+        v-model="searchQuery"
+        placeholder="Поиск..."
+        style="font-size: medium; margin-top: 10px;"/>
     <div class="info__wrapper">
       <div v-if="employees.length > 0 && !editListMode && !isLoading" class="employee-list" v-scroll="handleScroll">
         <edit-list-item
@@ -23,8 +23,8 @@
             :key="index"
             :is-edit-mode="editListMode"
             :photo="true">
-          {{item.lastName}} {{item.firstName}} {{item.patronymic}}
-          </edit-list-item>
+          {{ item.lastName }} {{ item.firstName }} {{ item.patronymic }}
+        </edit-list-item>
       </div>
       <h4 v-else-if="employees.length <= 0 && !editListMode && !isLoading" style="margin: 5px">
         В этом подразделении нет сотрудников</h4>
@@ -37,7 +37,7 @@
             :is-edit-mode="editListMode"
             :photo="true"
             @chosen="handleChosen">
-          {{item.lastName}} {{item.firstName}} {{item.patronymic}}
+          {{ item.lastName }} {{ item.firstName }} {{ item.patronymic }}
         </edit-list-item>
       </div>
       <h4 v-else-if="editListMode && isLoading">Загрузка...</h4>
@@ -47,11 +47,13 @@
       <my-button
           v-if="editListMode"
           class="btn-cancel"
-          @click="editListMode = false">Отменить</my-button>
+          @click="editListMode = false">Отменить
+      </my-button>
       <my-button
           v-if="editListMode"
           class="btn-save"
-          @click="saveChanges">Сохранить изменения</my-button>
+          @click="saveChanges">Сохранить изменения
+      </my-button>
     </div>
   </div>
 </template>
@@ -101,7 +103,8 @@ export default {
       this.$emit('close-info-card')
       this.setActiveIndex(null)
     },
-    handleScroll(){},
+    handleScroll() {
+    },
     async updateDivisionName() {
       const updatedDivision = {...this.division}
       const updateResponse = await divisionsApi.updateDivision(this.division.id, this.newDivisionName)
@@ -117,7 +120,7 @@ export default {
       const getEmployeesResponse = await employeesApi.getAllEmployees()
 
       for (const it of getEmployeesResponse) {
-        if (it.employee_status === "WORKS" && it.employee_type !== "WATCHMAN") {
+        if (it.employeeStatus === "WORKS" && it.employeeType !== "WATCHMAN") {
           const getImageResponse = await employeesApi.getImage(it.image.image_id)
           let flag = false
           if (it.divisions) {
@@ -126,10 +129,10 @@ export default {
             })
           }
           const employee = {
-            id: it.employee_id,
-            lastName: it.second_name,
-            firstName: it.first_name,
-            patronymic: it.middle_name,
+            id: it.employeeId,
+            lastName: it.secondName,
+            firstName: it.firstName,
+            patronymic: it.middleName,
             photo: getImageResponse,
             inDivision: flag,
             isChosen: false
@@ -202,7 +205,8 @@ export default {
   padding: 15px 15px 10px;
   display: flex;
   flex-direction: column;
-  height: 80vh;
+  height: 72vh;
+  justify-content: space-around;
 }
 
 .close-cross {
@@ -237,7 +241,7 @@ export default {
   justify-content: space-between;
   margin: 10px 0 25px;
   flex-direction: column;
-  height: 50vh;
+  min-height: 200px;
   overflow-y: auto;
   border: 1px solid lightgray;
   border-radius: 4px;

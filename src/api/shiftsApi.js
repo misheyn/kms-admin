@@ -4,7 +4,7 @@ export default class shiftsApi {
 
     static async getAllShifts() {
         try {
-            return await axios.get('https://kms2-production.up.railway.app/api/shifts?limit=5')
+            return await axios.get('https://kmsadmin-production.up.railway.app/api/shifts?limit=5')
                 .then(response => response.data)
         } catch (error) {
             alert("Error!")
@@ -14,7 +14,7 @@ export default class shiftsApi {
 
     static async getAllOperationsByShift(shiftId) {
         try {
-            return await axios.get(`https://kms2-production.up.railway.app/api/shifts/${shiftId}/operations`)
+            return await axios.get(`https://kmsadmin-production.up.railway.app/api/shifts/${shiftId}/operations`)
                 .then(response => response.data)
         } catch (error) {
             alert("Error!")
@@ -24,7 +24,7 @@ export default class shiftsApi {
 
     static async getSignaturesByOperation(operationId) {
         try {
-            return await axios.get(`https://kms2-production.up.railway.app/api/operations/${operationId}/signatures`)
+            return await axios.get(`https://kmsadmin-production.up.railway.app/api/operations/${operationId}/signatures`)
                 .then(response => response.data)
         } catch (error) {
             alert("Error!")

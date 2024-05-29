@@ -1,24 +1,24 @@
 <template>
   <form @submit.prevent>
     <div class="form__inputs">
-        <text-input
-            v-model="audience.number"
-            placeholder="Номер аудитории"/>
-        <text-input
-            v-model="audience.capacity"
-            placeholder="Вместимость"/>
-        <select class="audience-type" v-model="audience.type">
-          <option value="" selected disabled>Выберите тип</option>
-          <option value="STUDY">Учебная</option>
-          <option value="MULTIMEDIA">Мультимедийная</option>
-          <option value="LAB">Лаборатория</option>
-          <option value="ADMINISTRATION">Служебная</option>
-        </select>
+      <text-input
+          v-model="audience.number"
+          placeholder="Номер аудитории"/>
+      <text-input
+          v-model="audience.capacity"
+          placeholder="Вместимость"/>
+      <select class="audience-type" v-model="audience.type">
+        <option value="" selected disabled>Выберите тип</option>
+        <option value="STUDY">Учебная</option>
+        <option value="MULTIMEDIA">Мультимедийная</option>
+        <option value="LAB">Лаборатория</option>
+        <option value="ADMINISTRATION">Служебная</option>
+      </select>
       <my-button
-        class="btn"
-        @click="addAudience">
-      Добавить
-    </my-button>
+          class="btn"
+          @click="addAudience">
+        Добавить
+      </my-button>
     </div>
   </form>
 </template>
@@ -48,23 +48,29 @@ export default {
           this.audience.capacity,
           this.audience.type)
       const createMainKeyResponse = await audiencesApi.createKey(createAudienceResponse.audience_id, true)
+      const generateQRMain = await audiencesApi.generateQR(createMainKeyResponse.key_id)
       const createSpareKeyResponse = await audiencesApi.createKey(createAudienceResponse.audience_id, false)
-      this.audience.keys.push({
-        id: createMainKeyResponse.key_id,
-        state: createMainKeyResponse.key_state,
-        main: createMainKeyResponse.main,
-        qrData: createMainKeyResponse.qr})
-      this.audience.keys.push({
-        id: createSpareKeyResponse.key_id,
-        state: createSpareKeyResponse.key_state,
-        main: createSpareKeyResponse.main,
-        qrData: createSpareKeyResponse.qr})
-      this.$emit('create', this.audience)
-      this.audience = {
-        number: '',
-        capacity: '',
-        type: "",
-        keys: []
+      const generateQRSpare = await audiencesApi.generateQR(createSpareKeyResponse.key_id)
+      if (generateQRMain.status === 200 && generateQRSpare.status === 200) {
+        this.audience.keys.push({
+          id: createMainKeyResponse.key_id,
+          state: createMainKeyResponse.key_state,
+          main: createMainKeyResponse.main,
+          qrData: createMainKeyResponse.qr
+        })
+        this.audience.keys.push({
+          id: createSpareKeyResponse.key_id,
+          state: createSpareKeyResponse.key_state,
+          main: createSpareKeyResponse.main,
+          qrData: createSpareKeyResponse.qr
+        })
+        this.$emit('create', this.audience)
+        this.audience = {
+          number: '',
+          capacity: '',
+          type: "",
+          keys: []
+        }
       }
     }
   }

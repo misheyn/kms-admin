@@ -14,17 +14,17 @@
       <my-dialog v-model:show="dialogVisible">
         <add-audience-form @create="addAudience"/>
       </my-dialog>
-        <select v-model="selectedType" class="filter-type">
-          <option value="" selected disabled>Выберите тип</option>
-          <option value="">Все</option>
-          <option value="STUDY">Учебная</option>
-          <option value="LAB">Лаборатория</option>
-          <option value="MULTIMEDIA">Мультимедийная</option>
-          <option value="ADMINISTRATION">Служебная</option>
-        </select>
-        <search-bar
-            v-model="searchQuery"
-            placeholder="Поиск..."/>
+      <select v-model="selectedType" class="filter-type">
+        <option value="" selected disabled>Выберите тип</option>
+        <option value="">Все</option>
+        <option value="STUDY">Учебная</option>
+        <option value="LAB">Лаборатория</option>
+        <option value="MULTIMEDIA">Мультимедийная</option>
+        <option value="ADMINISTRATION">Служебная</option>
+      </select>
+      <search-bar
+          v-model="searchQuery"
+          placeholder="Поиск..."/>
     </div>
     <div class="center__panel">
       <list-of-cards
@@ -83,7 +83,6 @@ export default {
     async fetchAudiences() {
       this.isLoading = true
       const getAudiencesResponse = await audiencesApi.getAllKeys()
-
       getAudiencesResponse.forEach(it => {
         if (it.audience && it.audience.exist) {
           const index = this.audiences.findIndex(audience => audience.id === (it.audience.audience_id || it.audience))

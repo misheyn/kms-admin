@@ -80,7 +80,7 @@ export default {
     async saveChanges() {
       let deleteImageId = 0
       if ((this.localWatchman.photo === null || this.localWatchman.photo !== this.watchman.photo) &&
-          this.localWatchman.imageId !== 103) deleteImageId = this.watchman.imageId
+          this.localWatchman.imageId !== 1) deleteImageId = this.watchman.imageId
 
       if (this.localWatchman.photo !== this.watchman.photo && this.localWatchman.photo !== null) {
         const formData = new FormData()
@@ -88,8 +88,8 @@ export default {
         const createImageResponse = await employeesApi.createImage(formData)
         if (createImageResponse.status === 200 || createImageResponse.status === 201)
           this.localWatchman.imageId = createImageResponse.data.image_id
-      } else {
-        this.localWatchman.imageId = 103
+      } else if (this.localWatchman.photo === null) {
+        this.localWatchman.imageId = 1
       }
       if (this.samePassword)
         this.$emit('edit', this.localWatchman, this.newPassword, deleteImageId)

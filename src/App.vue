@@ -1,13 +1,13 @@
 <template>
   <nav-bar></nav-bar>
   <div class="app">
-      <router-view></router-view>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import {defineComponent} from "vue";
-import NavBar from "@/components/NavBar.vue";
+import {defineComponent} from "vue"
+import NavBar from "@/components/NavBar.vue"
 
 export default defineComponent({
   components: {NavBar}

@@ -4,7 +4,7 @@ export default class divisionsApi {
 
     static async createDivision(name) {
         try {
-            return await axios.post('https://kms2-production.up.railway.app/api/divisions', {
+            return await axios.post('https://kmsadmin-production.up.railway.app/api/divisions', {
                 name: name
             })
                 .then(response => response.data)
@@ -16,7 +16,7 @@ export default class divisionsApi {
 
     static async getAllDivisions() {
         try {
-            return await axios.get('https://kms2-production.up.railway.app/api/divisions')
+            return await axios.get('https://kmsadmin-production.up.railway.app/api/divisions')
                 .then(response => response.data)
         } catch (error) {
             alert("Error!")
@@ -26,7 +26,7 @@ export default class divisionsApi {
 
     static async deleteAudience(id, firstName, lastName, patronymic, employeeType) {
         try {
-            return await axios.put(`https://kms2-production.up.railway.app/api/employees/${id}`, {
+            return await axios.put(`https://kmsadmin-production.up.railway.app/api/employees/${id}`, {
                 first_name: firstName,
                 second_name: lastName,
                 middle_name: patronymic,
@@ -43,7 +43,7 @@ export default class divisionsApi {
 
     static async updateDivision(id, name) {
         try {
-            return await axios.put(`https://kms2-production.up.railway.app/api/divisions/${id}`, {
+            return await axios.put(`https://kmsadmin-production.up.railway.app/api/divisions/${id}`, {
                 name: name
             })
                 .then(response => response)

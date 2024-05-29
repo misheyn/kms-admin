@@ -4,34 +4,35 @@
     <div class="audience" style="font-size: large">
       Аудитория: <b>{{ operation.key.number }}</b>
     </div>
-    <div>Ключ: {{operation.key.main ? 'основной' : 'запасной'}}</div>
+    <div>Ключ: {{ operation.key.main ? 'основной' : 'запасной' }}</div>
     <div style="font-size: large; margin-top: 10px;">Сотрудник</div>
     <div class="employee__wrapper">
       <div class="photo" style="height: 60px;">
         <img :src="handleImagePreview(operation.employee.photo)" alt="employee-img">
       </div>
       <div class="info" style="margin-left: 10px;">
-        <b>{{convertType(operation.employee.type)}}</b><br>{{operation.employee.lastName}} {{operation.employee.firstName}}
-        {{operation.employee.patronymic}}<br>
-        Разрешение: <b>{{checkPermissions(operation.key, operation.employee) ? 'есть': 'нет'}}</b>
+        <b>{{ convertType(operation.employee.type) }}</b><br>{{ operation.employee.lastName }}
+        {{ operation.employee.firstName }}
+        {{ operation.employee.patronymic }}<br>
+        Разрешение: <b>{{ checkPermissions(operation.key, operation.employee) ? 'есть' : 'нет' }}</b>
       </div>
     </div>
     <div class="operation__wrapper" style="display: flex; justify-content: space-between;">
-    <div class="give-key">
-      <b>Выдача</b><br>{{formatDate(operation.giveDateTime)}} в {{formatTime(operation.giveDateTime)}}<br>
-      Подпись
-      <div class="signature" v-if="signatures[0] !== null" style="height: 50px;">
-        <img :src="signatures[0]" alt="signature-img">
+      <div class="give-key">
+        <b>Выдача</b><br>{{ formatDate(operation.giveDateTime) }} в {{ formatTime(operation.giveDateTime) }}<br>
+        Подпись
+        <div class="signature" v-if="signatures[0] !== null" style="height: 50px;">
+          <img :src="signatures[0]" alt="signature-img">
+        </div>
       </div>
-    </div>
       <div class="return-key" v-if="operation.returnDateTime !== null">
-        <b>Сдача</b><br>{{formatDate(operation.returnDateTime)}} в {{formatTime(operation.returnDateTime)}}<br>
+        <b>Сдача</b><br>{{ formatDate(operation.returnDateTime) }} в {{ formatTime(operation.returnDateTime) }}<br>
         Подпись
         <div class="signature" v-if="signatures[1] !== null" style="height: 50px;">
           <img :src="signatures[1]" alt="signature-img">
         </div>
       </div>
-  </div>
+    </div>
   </div>
 </template>
 
@@ -40,7 +41,7 @@ import {mapMutations, mapState} from "vuex"
 import employeesApi from "@/api/employeesApi"
 
 export default {
-  data () {
+  data() {
     return {
       signatures: []
     }

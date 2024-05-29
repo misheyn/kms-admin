@@ -15,25 +15,30 @@
           @toggle-active="toggleActive(index)">
         <div
             v-if="cardType === 'employee' || cardType === 'watchman' || cardType === 'permissionEmployee'"
-            class="first-line">{{ item.lastName }} {{ item.firstName.slice(0, 1) }}. {{ item.patronymic.slice(0, 1) }}.</div>
+            class="first-line">{{ item.lastName }} {{ item.firstName.slice(0, 1) }}. {{ item.patronymic.slice(0, 1) }}.
+        </div>
         <div v-if="cardType === 'employee'">Должность: {{ convertType(item.type) }}</div>
         <div v-if="cardType === 'watchman'">Логин: {{ item.login }}</div>
         <div v-if="cardType === 'audience'" class="first-line">{{ item.number }}</div>
         <div v-if="cardType === 'audience'">Тип: {{ convertType(item.type) }}</div>
         <div v-if="cardType === 'division' || cardType === 'permissionDivision'" class="first-line">
-          {{ item.name }}</div>
-        <div v-if="cardType === 'permissionEmployee'">
-          Должность: {{ convertType(item.type) }}, Разрешений: {{ item.permissionsNumber }}</div>
+          {{ item.name }}
+        </div>
+        <div v-if="cardType === 'permissionEmployee'" style="font-size: 14px">
+          Должность: {{ convertType(item.type) }}, Разрешений: {{ item.permissionsNumber }}
+        </div>
         <div v-if="cardType === 'permissionDivision'">
-          Разрешений: {{ item.permissionsNumber }}</div>
+          Разрешений: {{ item.permissionsNumber }}
+        </div>
         <div v-if="cardType === 'operation'" class="operation">
-          {{item.key.main ? 'Основной' : 'Запасной'}} ключ от аудитории <b>{{item.key.number}}</b></div>
+          {{ item.key.main ? 'Основной' : 'Запасной' }} ключ от аудитории <b>{{ item.key.number }}</b></div>
         <div v-if="cardType === 'operation'" class="operation">
-          Выдан: <b>{{formatTime(item.giveDateTime)}}</b>
-          <br>Возвращен: <b>{{formatTime(item.returnDateTime)}}</b></div>
+          Выдан: <b>{{ formatTime(item.giveDateTime) }}</b>
+          <br>Возвращен: <b>{{ formatTime(item.returnDateTime) }}</b></div>
         <div v-if="cardType === 'operation'" class="operation">
-          {{convertTypeForOperation(item.employee.type)}} <b>{{item.employee.lastName}}</b>
-          {{item.employee.firstName.slice(0, 1)}}. {{item.employee.patronymic.slice(0, 1)}}.</div>
+          {{ convertTypeForOperation(item.employee.type) }} <b>{{ item.employee.lastName }}</b>
+          {{ item.employee.firstName.slice(0, 1) }}. {{ item.employee.patronymic.slice(0, 1) }}.
+        </div>
       </list-item>
     </transition-group>
   </div>
@@ -43,7 +48,7 @@
 <script>
 import ListItem from "@/components/ListItem.vue"
 import vScroll from "@/directives/vScroll.js"
-import { mapState, mapMutations } from "vuex"
+import {mapState, mapMutations} from "vuex"
 
 export default {
   components: {ListItem},
@@ -65,7 +70,8 @@ export default {
     }
   },
   methods: {
-    handleScroll(){},
+    handleScroll() {
+    },
     handleShowInfoCard(item, cardType) {
       this.$emit('show-info-card', item)
       if (cardType === 'permissionEmployee' || cardType === 'permissionDivision' || cardType === 'division')

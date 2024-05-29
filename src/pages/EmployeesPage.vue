@@ -76,17 +76,17 @@ export default {
       const day = dateObject.getDate().toString().padStart(2, "0")
       return `${year}-${month}-${day}`
     },
-    async addEmployee (object) {
+    async addEmployee(object) {
       const getImageResponse = await employeesApi.getImage(object.employee.image.image_id)
 
       const employee = {
-        id: object.employee.employee_id,
-        lastName: object.employee.second_name,
-        firstName: object.employee.first_name,
-        patronymic: object.employee.middle_name,
+        id: object.employee.employeeId,
+        lastName: object.employee.secondName,
+        firstName: object.employee.firstName,
+        patronymic: object.employee.middleName,
         imageId: object.employee.image.image_id,
         photo: getImageResponse,
-        type: object.employee.employee_type,
+        type: object.employee.employeeType,
         qrData: object.employee.qr,
         IDId: object.id,
         IDNumber: object.number,
@@ -96,27 +96,27 @@ export default {
       this.employees.push(employee)
       this.dialogVisible = false
     },
-    showInfoCard (employee) {
+    showInfoCard(employee) {
       this.selectedEmployee = employee
     },
-    removeEmployee (employee) {
+    removeEmployee(employee) {
       this.employees = this.employees.filter(emp => emp.id !== employee.id)
     },
-    async fetchEmployees () {
+    async fetchEmployees() {
       this.isLoading = true
       const getEmployeesResponse = await employeesApi.getAllIDs()
 
       for (const it of getEmployeesResponse) {
-        if (it.employee.employee_status === "WORKS" && it.employee.employee_type !== "WATCHMAN") {
+        if (it.employee.employeeStatus === "WORKS" && it.employee.employeeType !== "WATCHMAN") {
           const getImageResponse = await employeesApi.getImage(it.employee.image.image_id)
           const employee = {
-            id: it.employee.employee_id,
-            lastName: it.employee.second_name,
-            firstName: it.employee.first_name,
-            patronymic: it.employee.middle_name,
+            id: it.employee.employeeId,
+            lastName: it.employee.secondName,
+            firstName: it.employee.firstName,
+            patronymic: it.employee.middleName,
             imageId: it.employee.image.image_id,
             photo: getImageResponse,
-            type: it.employee.employee_type,
+            type: it.employee.employeeType,
             qrData: it.employee.qr,
             IDId: it.id,
             IDNumber: it.number,

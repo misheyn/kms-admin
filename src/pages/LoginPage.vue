@@ -1,40 +1,44 @@
 <template>
   <form @submit.prevent class="login-form">
     <h1 style="margin-bottom: 15px">Авторизация</h1>
-    <input class="input" v-model="admin.login" type="text" placeholder="Логин...">
-    <input class="input" v-model="admin.password" type="password" placeholder="Пароль...">
-    <button class="btn" @click="logIn">Войти</button>
+    <input class="input" v-model="admin.login" placeholder="Логин..." type="text">
+    <input class="input" v-model="admin.password" placeholder="Пароль..." type="password">
+    <button class="btn" @click="signIn">Войти</button>
   </form>
 </template>
 
 <script>
-import axios from "axios";
+import axios from "axios"
+import { mapActions } from 'vuex'
 
 export default {
   data() {
     return {
       admin: {
-        name: '',
         login: '',
         password: ''
       }
     }
   },
   methods: {
-    async logIn() {
+    ...mapActions({
+      logIn: 'auth/logIn'
+    }),
+    async signIn() {
       try {
-        const response = await axios.post("https://muddled-event-production.up.railway.app/api/users/auth", {
+        const response = await axios.post("https://kmsadmin-production.up.railway.app/api/users/auth", {
           username: this.admin.login,
           password: this.admin.password
         })
         if (response.status === 200) {
-          this.$router.push('/main');
+          await this.logIn()
+          this.$router.push('/shifts')
         } else {
-          alert('Ошибка при авторизации. Пожалуйста, проверьте введенные данные.');
+          alert('Ошибка при авторизации. Пожалуйста, проверьте введенные данные.')
         }
       } catch (e) {
-        console.error(e);
-        alert('Ошибка при отправке запроса на сервер. Пожалуйста, попробуйте позже.');
+        console.error(e)
+        alert('Ошибка при отправке запроса на сервер. Пожалуйста, попробуйте позже.')
       }
     }
   }
@@ -47,23 +51,26 @@ export default {
   align-items: center;
   justify-content: space-between;
   flex-direction: column;
-  margin: 65px;
+  margin-top: 165px;
   padding: 20px;
 }
 
 .input {
-  margin-bottom: 15px;
-  min-width: 25%;
-  min-height: 30px;
+  margin-bottom: 10px;
+  width: 25%;
+  min-height: 40px;
   font-size: medium;
+  border-radius: 5px;
 }
 
 .btn {
-  font-size: medium;
+  font-size: large;
   font-weight: bold;
-  background: #E8D6FF;
+  color: #498F7A;
+  background: none;
   padding: 10px 30px;
-  border: none;
+  border: 2px solid #498F7A;
   border-radius: 15px;
+  cursor: pointer;
 }
 </style>

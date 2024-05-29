@@ -5,30 +5,36 @@
       <button
           class="switch-btn"
           :class="{ 'active-tab': selectedTab === 'shifts' }"
-          @click="selectTab('shifts')">Журнал смен</button>
+          @click="selectTab('shifts')">Журнал смен
+      </button>
       <button
           class="switch-btn"
           :class="{ 'active-tab': selectedTab === 'employees' || selectedTab === 'audiences' }"
-          @click="selectTab('employees')">Сотрудники и аудитории</button>
+          @click="selectTab('employees')">Сотрудники и аудитории
+      </button>
       <button
           class="switch-btn"
           :class="{ 'active-tab': selectedTab === 'watchmen' }"
-          @click="selectTab('watchmen')">Вахтеры</button>
+          @click="selectTab('watchmen')">Вахтеры
+      </button>
       <button
           class="switch-btn"
           :class="{ 'active-tab': selectedTab === 'permissions' }"
-          @click="selectTab('permissions')">Разрешения</button>
+          @click="selectTab('permissions')">Разрешения
+      </button>
       <button
           class="switch-btn"
           :class="{ 'active-tab': selectedTab === 'divisions' }"
-          @click="selectTab('divisions')">Подразделения</button>
-      <my-button @click="$router.push('/')" style="margin-left: 20px; background: black; color: white">Выйти</my-button>
+          @click="selectTab('divisions')">Подразделения
+      </button>
+      <my-button @click="signOut" style="margin-left: 20px; background: black; color: white">Выйти</my-button>
     </div>
   </div>
 </template>
 
 <script>
 import MyButton from "@/components/UI/MyButton.vue"
+import {mapActions} from 'vuex'
 
 export default {
   components: {MyButton},
@@ -38,16 +44,23 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      logOut: 'auth/logOut'
+    }),
     selectTab(tab) {
       this.selectedTab = tab
       this.$router.push(`/${tab}`)
     },
     updateSelectedTab() {
       this.selectedTab = this.$route.name
+    },
+    signOut() {
+      this.logOut()
+      this.$router.push('/auth')
     }
   },
   computed: {
-    isAuthPage () {
+    isAuthPage() {
       return this.$route.name === 'auth'
     }
   },

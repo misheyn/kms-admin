@@ -4,11 +4,13 @@
       <button
           class="switch-btn"
           :class="{'active-tab': cardType === 'permissionEmployee'}"
-          @click="cardType = 'permissionEmployee'">Сотрудников</button>
+          @click="cardType = 'permissionEmployee'">Сотрудников
+      </button>
       <button
           class="switch-btn"
           :class="{'active-tab': cardType === 'permissionDivision'}"
-          @click="cardType = 'permissionDivision'">Подразделений</button>
+          @click="cardType = 'permissionDivision'">Подразделений
+      </button>
     </div>
     <div class="line"></div>
     <div class="top__panel">
@@ -61,10 +63,10 @@ export default {
     }
   },
   methods: {
-    showInfoCard (object) {
+    showInfoCard(object) {
       this.selectedObject = object
     },
-    async updatePermissions (object, isEmployee) {
+    async updatePermissions(object, isEmployee) {
       if (isEmployee) {
         const index = this.employees.findIndex(e => e.id === object.id)
         if (index !== -1) this.employees.splice(index, 1, object)
@@ -75,11 +77,11 @@ export default {
       }
       this.showInfoCard(object)
     },
-    updateAudiences (audience, type) {
+    updateAudiences(audience, type) {
       if (type === 'push') this.audiences.push(audience)
       else if (type === 'remove') this.audiences.splice(this.audiences.indexOf(audience), 1)
     },
-    async fetchDivisions () {
+    async fetchDivisions() {
       const getDivisionsResponse = await divisionsApi.getAllDivisions()
       getDivisionsResponse.forEach(it => {
         const division = {
@@ -91,20 +93,20 @@ export default {
         this.divisions.push(division)
       })
     },
-    async fetchEmployees () {
+    async fetchEmployees() {
       const getEmployeesResponse = await employeesApi.getAllEmployees()
 
       for (const it of getEmployeesResponse) {
-        if (it.employee_status === "WORKS" && it.employee_type !== "WATCHMAN") {
+        if (it.employeeStatus === "WORKS" && it.employeeType !== "WATCHMAN") {
           const getImageResponse = await employeesApi.getImage(it.image.image_id)
           const employee = {
-            id: it.employee_id,
-            lastName: it.second_name,
-            firstName: it.first_name,
-            patronymic: it.middle_name,
+            id: it.employeeId,
+            lastName: it.secondName,
+            firstName: it.firstName,
+            patronymic: it.middleName,
             imageId: it.image.image_id,
             photo: getImageResponse,
-            type: it.employee_type,
+            type: it.employeeType,
             permissionsNumber: it.permissions.length,
             permissions: it.permissions
           }
@@ -141,7 +143,7 @@ export default {
     }
   },
   computed: {
-    searchedObjects () {
+    searchedObjects() {
       if (this.cardType === 'permissionEmployee') {
         const query = this.searchQuery.toLowerCase()
         const convertedTypes = this.employees.map(employee => this.convertType(employee.type).toLowerCase())

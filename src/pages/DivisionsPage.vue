@@ -57,7 +57,7 @@ export default {
     }
   },
   methods: {
-    addDivision (object) {
+    addDivision(object) {
       const division = {
         id: object.division_id,
         name: object.name
@@ -65,7 +65,7 @@ export default {
       this.divisions.push(division)
       this.dialogVisible = false
     },
-    showInfoCard (division) {
+    showInfoCard(division) {
       this.selectedDivision = division
     },
     async getEmployees() {
@@ -73,15 +73,15 @@ export default {
       const getEmployeesResponse = await employeesApi.getAllEmployees()
 
       for (const it of getEmployeesResponse) {
-        if (it.employee_status === "WORKS" && it.employee_type !== "WATCHMAN" && it.divisions) {
+        if (it.employeeStatus === "WORKS" && it.employeeType !== "WATCHMAN" && it.divisions) {
           for (const itDiv of it.divisions) {
             if (itDiv.division_id === this.selectedDivision.id) {
               const getImageResponse = await employeesApi.getImage(it.image.image_id)
               const employee = {
-                id: it.employee_id,
-                lastName: it.second_name,
-                firstName: it.first_name,
-                patronymic: it.middle_name,
+                id: it.employeeId,
+                lastName: it.secondName,
+                firstName: it.firstName,
+                patronymic: it.middleName,
                 photo: getImageResponse
               }
               this.employees.push(employee)
@@ -90,15 +90,15 @@ export default {
         }
       }
     },
-    async fetchDivisions () {
+    async fetchDivisions() {
       this.isLoading = true
       const getDivisionsResponse = await divisionsApi.getAllDivisions()
       getDivisionsResponse.forEach(it => {
-          const division = {
-            id: it.division_id,
-            name: it.name
-          }
-          this.divisions.push(division)
+        const division = {
+          id: it.division_id,
+          name: it.name
+        }
+        this.divisions.push(division)
       })
       this.isLoading = false
     },
@@ -107,13 +107,13 @@ export default {
       if (index !== -1) this.divisions.splice(index, 1, updatedDivision)
       this.showInfoCard(updatedDivision)
     },
-    updateEmployees (division, type) {
-      if (type === 'push') this.divisions.push(division)
-      else if (type === 'remove') this.divisions.splice(this.divisions.indexOf(division), 1)
+    updateEmployees(employee, type) {
+      if (type === 'push') this.employees.push(employee)
+      else if (type === 'remove') this.employees.splice(this.employees.indexOf(employee), 1)
     }
   },
   computed: {
-    searchedDivisions () {
+    searchedDivisions() {
       return this.divisions.filter(div => div && div.name && div.name.toLowerCase().includes(this.searchQuery.toLowerCase()))
     }
   },

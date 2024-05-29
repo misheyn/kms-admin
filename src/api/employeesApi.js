@@ -4,7 +4,7 @@ export default class employeesApi {
 
     static async createEmployee(firstName, lastName, patronymic, imageId, employeeType) {
         try {
-            return await axios.post('https://kms2-production.up.railway.app/api/employees', {
+            return await axios.post('https://kmsadmin-production.up.railway.app/api/employees', {
                 first_name: firstName,
                 second_name: lastName,
                 middle_name: patronymic,
@@ -20,7 +20,7 @@ export default class employeesApi {
 
     static async createID(id, number, startDate, endDate) {
         try {
-            return await axios.post('https://kms2-production.up.railway.app/api/employeeIds', {
+            return await axios.post('https://kmsadmin-production.up.railway.app/api/employeeIds', {
                 number: number,
                 start_date: startDate,
                 end_date: endDate,
@@ -36,7 +36,7 @@ export default class employeesApi {
 
     static async createImage(photo) {
         try {
-            return await axios.post('https://kms2-production.up.railway.app/api/images',
+            return await axios.post('https://kmsadmin-production.up.railway.app/api/images',
                 photo,
                 {
                     headers: {
@@ -50,9 +50,19 @@ export default class employeesApi {
         }
     }
 
+    static async generateQR(employeeId) {
+        try {
+            return await axios.put(`https://kmsadmin-production.up.railway.app/api/employees/${employeeId}/QRs`)
+                .then(response => response)
+        } catch (error) {
+            alert("Error!")
+            console.error(error)
+        }
+    }
+
     static async getAllEmployees() {
         try {
-            return await axios.get('https://kms2-production.up.railway.app/api/employees')
+            return await axios.get('https://kmsadmin-production.up.railway.app/api/employees')
                 .then(response => response.data)
         } catch (error) {
             alert("Error!")
@@ -62,7 +72,7 @@ export default class employeesApi {
 
     static async getAllIDs() {
         try {
-            return await axios.get('https://kms2-production.up.railway.app/api/employeeIds')
+            return await axios.get('https://kmsadmin-production.up.railway.app/api/employeeIds')
                 .then(response => response.data)
         } catch (error) {
             alert("Error!")
@@ -72,7 +82,7 @@ export default class employeesApi {
 
     static async getAllImages() {
         try {
-            return await axios.get('https://kms2-production.up.railway.app/api/images')
+            return await axios.get('https://kmsadmin-production.up.railway.app/api/images')
                 .then(response => response.data)
         } catch (error) {
             alert("Error!")
@@ -82,7 +92,7 @@ export default class employeesApi {
 
     static async getImage(id) {
         try {
-            return await axios.get(`https://kms2-production.up.railway.app/api/images/${id}`,{
+            return await axios.get(`https://kmsadmin-production.up.railway.app/api/images/${id}`, {
                 responseType: 'blob'
             })
                 .then(response => response.data)
@@ -94,7 +104,7 @@ export default class employeesApi {
 
     static async getEmployee(id) {
         try {
-            return await axios.get(`https://kms2-production.up.railway.app/api/employees/${id}`)
+            return await axios.get(`https://kmsadmin-production.up.railway.app/api/employees/${id}`)
                 .then(response => response.data)
         } catch (error) {
             alert("Error!")
@@ -104,7 +114,7 @@ export default class employeesApi {
 
     static async updateEmployee(id, firstName, lastName, patronymic, imageId, type, status) {
         try {
-            return await axios.put(`https://kms2-production.up.railway.app/api/employees/${id}`, {
+            return await axios.put(`https://kmsadmin-production.up.railway.app/api/employees/${id}`, {
                 first_name: firstName,
                 second_name: lastName,
                 middle_name: patronymic,
@@ -121,7 +131,7 @@ export default class employeesApi {
 
     static async updateID(id, employeeId, number, startDate, endDate) {
         try {
-            return await axios.put(`https://kms2-production.up.railway.app/api/employeeIds/${id}`, {
+            return await axios.put(`https://kmsadmin-production.up.railway.app/api/employeeIds/${id}`, {
                 number: number,
                 start_date: startDate,
                 end_date: endDate,
@@ -137,7 +147,7 @@ export default class employeesApi {
 
     static async addEmployeeToDivision(divisionId, employeeId) {
         try {
-            return await axios.put(`https://kms2-production.up.railway.app/api/divisions/${divisionId}/employees/${employeeId}`)
+            return await axios.put(`https://kmsadmin-production.up.railway.app/api/divisions/${divisionId}/employees/${employeeId}`)
                 .then(response => response)
         } catch (error) {
             alert("Error!")
@@ -147,7 +157,7 @@ export default class employeesApi {
 
     static async deleteEmployeeFromDivision(divisionId, employeeId) {
         try {
-            return await axios.delete(`https://kms2-production.up.railway.app/api/divisions/${divisionId}/employees/${employeeId}`)
+            return await axios.delete(`https://kmsadmin-production.up.railway.app/api/divisions/${divisionId}/employees/${employeeId}`)
                 .then(response => response)
         } catch (error) {
             alert("Error!")
@@ -157,7 +167,7 @@ export default class employeesApi {
 
     static async deleteImage(id) {
         try {
-            return await axios.delete(`https://kms2-production.up.railway.app/api/images/${id}`)
+            return await axios.delete(`https://kmsadmin-production.up.railway.app/api/images/${id}`)
                 .then(response => response)
         } catch (error) {
             alert("Error!")

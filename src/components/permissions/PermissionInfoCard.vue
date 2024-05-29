@@ -1,7 +1,7 @@
 <template>
   <div class="info-card">
     <div class="close-cross" @click="closeInfoCard"></div>
-    <div class="name" style="font-size: large; font-weight: bold; display: flex">
+    <div class="name">
       Разрешения {{
         cardType === 'permissionEmployee' ? `сотрудника ${object.lastName} ${object.firstName}`
             : `подразделения ${object.name}`
@@ -95,7 +95,8 @@ export default {
     ...mapMutations({
       setActiveIndex: 'index/setActiveIndex'
     }),
-    handleScroll() {},
+    handleScroll() {
+    },
     convertType(type) {
       if (type === "STUDY") return 'Учебная'
       else if (type === "MULTIMEDIA") return 'Мультимедийная'
@@ -252,7 +253,8 @@ export default {
   padding: 15px 15px 10px;
   display: flex;
   flex-direction: column;
-  height: 80vh;
+  height: 72vh;
+  justify-content: space-around;
 }
 
 .close-cross {
@@ -287,10 +289,17 @@ export default {
   justify-content: space-between;
   margin: 10px 0 25px;
   flex-direction: column;
-  height: 50vh;
+  min-height: 200px;
   overflow-y: auto;
   border: 1px solid lightgray;
   border-radius: 4px;
   padding: 10px;
+}
+
+.name {
+  font-size: large;
+  font-weight: bold;
+  display: flex;
+  margin-top: 5px;
 }
 </style>

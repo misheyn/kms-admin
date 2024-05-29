@@ -104,7 +104,7 @@ export default {
     async saveChanges() {
       let deleteImageId = 0
       if ((this.localEmployee.photo === null || this.localEmployee.photo !== this.employee.photo) &&
-          this.localEmployee.imageId !== 103) deleteImageId = this.employee.imageId
+          this.localEmployee.imageId !== 1) deleteImageId = this.employee.imageId
 
       if (this.localEmployee.photo !== this.employee.photo && this.localEmployee.photo !== null) {
         const formData = new FormData()
@@ -112,8 +112,8 @@ export default {
         const createImageResponse = await employeesApi.createImage(formData)
         if (createImageResponse.status === 200 || createImageResponse.status === 201)
           this.localEmployee.imageId = createImageResponse.data.image_id
-      } else {
-        this.localEmployee.imageId = 103
+      } else if (this.localEmployee.photo === null) {
+        this.localEmployee.imageId = 1
       }
       this.$emit('edit', this.localEmployee, deleteImageId)
     }
