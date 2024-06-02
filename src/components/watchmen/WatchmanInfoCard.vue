@@ -67,7 +67,8 @@ export default {
           this.watchman.lastName,
           this.watchman.patronymic,
           this.watchman.imageId,
-          "WATCHMAN"
+          "WATCHMAN",
+          "FIRED"
       )
       if (deleteResponse.status === 200) {
         this.$emit('remove', this.watchman)
@@ -82,7 +83,8 @@ export default {
           updatedWatchman.lastName,
           updatedWatchman.patronymic,
           updatedWatchman.photo.image_id,
-          "WATCHMAN"
+          "WATCHMAN",
+          "WORKS"
       )
       const updateUserResponse = await watchmenApi.updateUser(
           updatedWatchman.id,

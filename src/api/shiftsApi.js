@@ -4,7 +4,7 @@ export default class shiftsApi {
 
     static async getAllShifts() {
         try {
-            return await axios.get('https://kmsadmin-production.up.railway.app/api/shifts?limit=5')
+            return await axios.get('https://kmsadmin-production.up.railway.app/api/shifts')
                 .then(response => response.data)
         } catch (error) {
             alert("Error!")
